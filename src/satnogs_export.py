@@ -3,6 +3,9 @@ import openpyxl  # excel
 from datetime import datetime
 
 
+DIR = 'D:\\satnogs_satellites.xlsx'
+
+
 def satelliteFilter(satMap: dict, mode="AFSK", baud=1200, time=365) -> dict:
     pass
 
@@ -16,7 +19,7 @@ def satelliteMap2Excel(satMap: dict) -> None:
         return
 
     wb = openpyxl.Workbook()  # create a openpyxl WB object
-    ws = wb.create_sheet("Unfiltered", 0)  # raw output
+    ws = wb.create_sheet("Unfiltered", 0)  # original JSON output
 
     ws["A1"] = "Name"
     ws["B1"] = "Description"
@@ -38,10 +41,15 @@ def satelliteMap2Excel(satMap: dict) -> None:
         currRow += 1
 
     ws = wb.create_sheet("Filtered", 1)  # filtered output
+    
+    # code to output filtered result
+    
     ws = wb.create_sheet("Sorted", 1)  # sorted output
+    
+    # code to output most recent result
 
-    # save to file
-    wb.save('D:\\satnogs_satellites.xlsx')
+    # save workbook to file
+    wb.save(DIR)
 
     return
 
