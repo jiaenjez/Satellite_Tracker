@@ -18,8 +18,8 @@ def satelliteMap2Excel(satMap: dict) -> None:
     if not satMap:  # if map is empty
         return
 
-    wb = openpyxl.Workbook()  # create a openpyxl WB object
-    ws = wb.create_sheet("Unfiltered", 0)  # original JSON output
+    wb = openpyxl.Workbook()  # create a openpyxl Workbook object
+    ws = wb.create_sheet("Unfiltered", 0)  # create tab for original JSON output
 
     ws["A1"] = "Name"
     ws["B1"] = "Description"
@@ -40,15 +40,15 @@ def satelliteMap2Excel(satMap: dict) -> None:
         ws.cell(currRow, 7, entry["time"])
         currRow += 1
 
-    ws = wb.create_sheet("Filtered", 1)  # filtered output
+    ws = wb.create_sheet("Filtered", 1)  # create tab for filtered output
     
     # code to output filtered result
     
-    ws = wb.create_sheet("Sorted", 1)  # sorted output
+    ws = wb.create_sheet("Sorted", 1)  # create tab for sorted output
     
     # code to output most recent result
 
-    # save workbook to file
+    # save Workbook to Excel file
     wb.save(DIR)
 
     return
