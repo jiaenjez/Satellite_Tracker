@@ -1,7 +1,6 @@
-import satnogs_api
+from src import satnogs_api, satnogs_selection
 import openpyxl  # excel
 from datetime import datetime
-import satnogs_selection
 
 
 def export(satelliteList: [dict]) -> None:
