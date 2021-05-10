@@ -3,13 +3,15 @@ import openpyxl  # excel
 from datetime import datetime
 
 
-def export(satelliteList: [dict]) -> None:
-    if not satelliteList:  # if list is empty
-        return
+def newWorkbook() -> openpyxl.Workbook:
+    return openpyxl.Workbook()
 
-    wb = openpyxl.Workbook()  # create a openpyxl WB object
-    ws = wb.create_sheet("Unfiltered", 0)  # raw output
 
+def newTab(wb: openpyxl.Workbook, tabName: str, tabIndex: int = 0) -> openpyxl.Workbook().worksheets:
+    return wb.create_sheet(tabName, tabIndex)
+
+
+def addHeader(ws: openpyxl.Workbook().worksheets) -> None:
     ws["A1"] = "Name"
     ws["B1"] = "Description"
     ws["C1"] = "Norad_cat_id"
@@ -18,30 +20,38 @@ def export(satelliteList: [dict]) -> None:
     ws["F1"] = "Baud Rate"
     ws["G1"] = "Timestamp"
 
-    currRow = 2
-    for entry in satelliteList:
-        ws.cell(currRow, 1, entry["name"])
-        ws.cell(currRow, 2, entry["description"])
-        ws.cell(currRow, 3, entry["norad_cat_id"])
-        ws.cell(currRow, 4, entry["service"])
-        ws.cell(currRow, 5, entry["mode"])
-        ws.cell(currRow, 6, entry["baud"])
-        ws.cell(currRow, 7, entry["time"])
-        currRow += 1
 
-    ws = wb.create_sheet("Filtered", 1)  # filtered output
-    ws = wb.create_sheet("Sorted", 1)  # sorted output
+def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
+    wb.save(dir)
+
+
+def export(result: [dict], dir: str) -> None:
+    if not result:  # if list is empty
+        return
+
+    wb = newWorkbook()  # create a openpyxl WB object
+    ws = newTab(wb, "allSatellite", 0)  # raw output
+    addHeader(ws)
+
+    for r in range(2, len(result) + 2):
+        entry = result[r - 2]
+
+        ws.cell(r, 1, entry["name"])
+        ws.cell(r, 2, entry["description"])
+        ws.cell(r, 3, entry["norad_cat_id"])
+        ws.cell(r, 4, entry["service"])
+        ws.cell(r, 5, entry["mode"])
+        ws.cell(r, 6, entry["baud"])
+        ws.cell(r, 7, entry["time"])
 
     # save to file
-    wb.save('D:\\satnogs_satellites.xlsx')
-
-    return
+    saveFile(wb, dir)
 
 
 # driver
-satelliteList = satnogs_api.getSatellites()
-filter = satnogs_selection.satelliteFilter(satelliteList)
-sort = satnogs_selection.sortMostRecent(filter)
-export(sort)
-for v in sort:
+allSatellite = satnogs_api.getSatellites()
+filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
+sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
+export(allSatellite, 'D:\\satnogs_satellites.xlsx')
+for v in sortedSatellite:
     print(v, end="\n")
