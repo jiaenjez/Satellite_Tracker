@@ -1,3 +1,6 @@
+from src import satnogs_api
+
+
 def satelliteFilter(satelliteList: [dict], mode: str = "AFSK", baud: int = 1200) -> [dict]:
     # filter the list of satellite by modulation mode and baud rate
     return [sat for sat in satelliteList if sat["mode"] is not None and mode in sat["mode"]
@@ -7,4 +10,15 @@ def satelliteFilter(satelliteList: [dict], mode: str = "AFSK", baud: int = 1200)
 def sortMostRecent(satelliteList: [dict], recent: bool = True) -> [dict]:
     # sort the list of satellite by timestamp (last known communication)
     return [sat for sat in sorted(satelliteList, key=lambda x: x["time"], reverse=recent)
-            if int(sat["time"][0:4]) >= 2020]
+            if int(sat["time"][0:4]) >= 2018]
+
+
+def getNoradID(satelliteList: [dict]) -> {str}:
+    # get a set of NoradID from dict, using set instead of list to improve
+    # search performance from O(n) to O(1)
+    return {sat["norad_cat_id"] for sat in satelliteList}
+
+
+def tleFilter(satelliteList: [dict]) -> [dict]:
+    # dict of tle from desired satellite
+    return [sat for sat in satnogs_api.getTLE() if sat["norad_cat_id"] in getNoradID(satelliteList)]

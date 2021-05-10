@@ -20,3 +20,9 @@ def getSatellites() -> [dict]:
              "service": s["service"], "mode": s["mode"],
              "baud": s["baud"], "time": s["updated"]}
             for s in requests.get(TRANSMITTER_URL).json() if s["alive"]]
+
+
+def getTLE() -> [dict]:
+    # get TLE response from api, TLE is used to calculate flight path
+
+    return [tle for tle in requests.get(TLE_URL).json()]
