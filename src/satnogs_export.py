@@ -79,6 +79,7 @@ allSatellite = satnogs_api.getSatellites()
 filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
 sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
 tle = satnogs_selection.tleFilter(sortedSatellite)
+
 wb = newWorkbook()
 exportTab(wb, 0, allSatellite)
 exportTab(wb, 1, filteredSatellite)
