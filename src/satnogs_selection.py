@@ -6,4 +6,4 @@ def satelliteFilter(satelliteList: [dict], mode: str = "AFSK", baud: int = 1200)
 
 def sortMostRecent(satelliteList: [dict], recent: bool = True) -> [dict]:
     # sort the list of satellite by timestamp (last known communication)
-    return sorted(satelliteList, key=lambda x: x["time"], reverse=recent)
+    return [sat for sat in sorted(satelliteList, key=lambda x: x["time"], reverse=recent) if int(sat["time"][0:4]) >= 2020]
