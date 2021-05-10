@@ -4,14 +4,17 @@ from datetime import datetime
 
 
 def newWorkbook() -> openpyxl.Workbook:
+    # create a new openpyxl excel object
     return openpyxl.Workbook()
 
 
 def newTab(wb: openpyxl.Workbook, tabName: str, tabIndex: int = 0) -> openpyxl.Workbook.worksheets:
+    # create a new tab in excel
     return wb.create_sheet(tabName, tabIndex)
 
 
 def addHeader(ws: openpyxl.Workbook.worksheets) -> None:
+    # add these headers to row 1 of current excel tab
     ws["A1"] = "Name"
     ws["B1"] = "Description"
     ws["C1"] = "Norad_cat_id"
@@ -22,15 +25,16 @@ def addHeader(ws: openpyxl.Workbook.worksheets) -> None:
 
 
 def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
+    # save openpyxl workbook to specified directory as an excel file
     wb.save(dir)
 
 
 def export(result: [dict], dir: str) -> None:
-    if not result:  # if list is empty
+    if not result:  # if list is empty, do nothing
         return
 
     wb = newWorkbook()  # create a openpyxl WB object
-    ws = newTab(wb, "allSatellite", 0)  # raw output
+    ws = newTab(wb, "allSatellite", 0)  # tab 0 for all satellite
     addHeader(ws)
 
     for r in range(2, len(result) + 2):
