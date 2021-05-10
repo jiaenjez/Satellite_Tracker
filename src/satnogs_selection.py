@@ -1,4 +1,4 @@
-def satelliteFilter(satelliteList: list, mode="AFSK", baud=1200) -> dict:
+def satelliteFilter(satelliteList: list, mode="AFSK", baud=1200) -> [dict]:
     filtered = []
     for sat in satelliteList:
         if sat["mode"] == mode and sat["baud"] == int(baud):
@@ -8,7 +8,7 @@ def satelliteFilter(satelliteList: list, mode="AFSK", baud=1200) -> dict:
     return filtered
 
 
-def sortMostRecent(satelliteList: dict, recent=True) -> list:
+def sortMostRecent(satelliteList: dict, recent=True) -> [dict]:
     ret = sorted(satelliteList, key=lambda x: x["time"], reverse=recent)
 
     return ret
