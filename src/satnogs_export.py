@@ -2,6 +2,9 @@ from src import satnogs_api, satnogs_selection
 import openpyxl  # excel
 from datetime import datetime
 
+TABS = {0: "allSatellite", 1: "filteredSatellite", 2: "sortedSatellite"}
+DIR = 'D:\\satnogs_satellites.xlsx'
+
 
 def newWorkbook() -> openpyxl.Workbook:
     # create a new openpyxl excel object
@@ -24,19 +27,7 @@ def addHeader(ws: openpyxl.Workbook.worksheets) -> None:
     ws["G1"] = "Timestamp"
 
 
-def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
-    # save openpyxl workbook to specified directory as an excel file
-    wb.save(dir)
-
-
-def export(result: [dict], dir: str) -> None:
-    if not result:  # if list is empty, do nothing
-        return
-
-    wb = newWorkbook()  # create a openpyxl WB object
-    ws = newTab(wb, "allSatellite", 0)  # tab 0 for all satellite
-    addHeader(ws)
-
+def exportData(ws: openpyxl.Workbook.worksheets, result: [dict]) -> None:
     for r in range(2, len(result) + 2):
         entry = result[r - 2]
 
@@ -48,14 +39,29 @@ def export(result: [dict], dir: str) -> None:
         ws.cell(r, 6, entry["baud"])
         ws.cell(r, 7, entry["time"])
 
-    # save to file
-    saveFile(wb, dir)
+
+def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
+    # save openpyxl workbook to specified directory as an excel file
+    wb.save(dir)
+
+
+def exportTab(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
+    if not result:  # if list is empty, do nothing
+        return
+
+    ws = newTab(wb, TABS[tab], tab)
+    addHeader(ws)
+    exportData(ws, result)
 
 
 # driver
 allSatellite = satnogs_api.getSatellites()
 filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
 sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
-export(allSatellite, 'D:\\satnogs_satellites.xlsx')
+wb = newWorkbook()
+exportTab(wb, 0, allSatellite)
+exportTab(wb, 1, filteredSatellite)
+exportTab(wb, 2, sortedSatellite)
+saveFile(wb, DIR)
 for v in sortedSatellite:
     print(v, end="\n")
