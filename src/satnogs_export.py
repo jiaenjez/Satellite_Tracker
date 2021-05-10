@@ -2,7 +2,7 @@ from src import satnogs_api, satnogs_selection
 import openpyxl  # excel
 from datetime import datetime
 
-TABS = {0: "allSatellite", 1: "filteredSatellite", 2: "sortedSatellite"}
+TABSNAME = {0: "allSatellite", 1: "filteredSatellite", 2: "sortedSatellite"}
 DIR = 'D:\\satnogs_satellites.xlsx'
 
 
@@ -49,7 +49,7 @@ def exportTab(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
     if not result:  # if list is empty, do nothing
         return
 
-    ws = newTab(wb, TABS[tab], tab)
+    ws = newTab(wb, TABSNAME[tab], tab)
     addHeader(ws)
     exportData(ws, result)
 
