@@ -5,7 +5,6 @@ TRANSMITTER_URL = "https://db.satnogs.org/api/transmitters/?key=36ff1b885dafa497
 SATELLITE_URL = "https://db.satnogs.org/api/satellites/?key=36ff1b885dafa497e93073092cdac1c9887e510c&format=json"
 TLE_URL = "https://db.satnogs.org/api/tle/?key=36ff1b885dafa497e93073092cdac1c9887e510c&format=json"
 TELEMETRY_URL = ""
-
 CELESTRAK_URL = "https://www.celestrak.com/satcat/tle.php?CATNR=46287"
 
 
@@ -14,20 +13,10 @@ def getID() -> set:
 
 
 def getSatellites() -> [dict]:
-    transmitters = requests.get(TRANSMITTER_URL).json()
-    satellites = requests.get(SATELLITE_URL).json()
-    sat = {}
-    for x in satellites:
-        sat[x["norad_cat_id"]] = x["name"]  # Get satellite name from DB
-    Satellites = []
-    for x in transmitters:  # Use Transmitter uuid to make looking up satellite from job easier
-        if x["alive"]:
-            Satellites.append({"name": sat[x["norad_cat_id"]], "description": x["description"],
-                               "norad_cat_id": x["norad_cat_id"],
-                               "service": x["service"], "mode": x["mode"],
-                               "baud": x["baud"], "time": x["updated"]})
-    return Satellites
+    sat = {s["norad_cat_id"]: s["name"] for s in requests.get(SATELLITE_URL).json()}
 
-
-# def getTLE() -> dict:
-#     pass
+    return [{"name": sat[s["norad_cat_id"]], "description": s["description"],
+             "norad_cat_id": s["norad_cat_id"],
+             "service": s["service"], "mode": s["mode"],
+             "baud": s["baud"], "time": s["updated"]}
+            for s in requests.get(TRANSMITTER_URL).json() if s["alive"]]
