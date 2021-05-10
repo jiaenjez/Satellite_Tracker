@@ -8,7 +8,7 @@ def satelliteFilter(satelliteList: list, mode="AFSK", baud=1200) -> [dict]:
     return filtered
 
 
-def sortMostRecent(satelliteList: object, recent: object = True) -> object:
+def sortMostRecent(satelliteList: [dict], recent: object = True) -> object:
     ret = sorted(satelliteList, key=lambda x: x["time"], reverse=recent)
 
     return ret
