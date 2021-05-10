@@ -46,6 +46,7 @@ def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
 
 
 def exportTab(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
+    #  export data from dict to excel tab
     if not result:  # if list is empty, do nothing
         return
 
