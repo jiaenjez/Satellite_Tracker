@@ -1,25 +1,15 @@
 import satnogs_api
 import openpyxl  # excel
 from datetime import datetime
+import satnogs_selection
 
 
-DIR = 'D:\\satnogs_satellites.xlsx'
-
-
-def satelliteFilter(satMap: dict, mode="AFSK", baud=1200, time=365) -> dict:
-    pass
-
-
-def sortRecent(satMap: dict) -> dict:  # sort by most recently updated
-    pass
-
-
-def satelliteMap2Excel(satMap: dict) -> None:
-    if not satMap:  # if map is empty
+def export(satelliteList: list) -> None:
+    if not satelliteList:  # if list is empty
         return
 
-    wb = openpyxl.Workbook()  # create a openpyxl Workbook object
-    ws = wb.create_sheet("Unfiltered", 0)  # create tab for original JSON output
+    wb = openpyxl.Workbook()  # create a openpyxl WB object
+    ws = wb.create_sheet("Unfiltered", 0)  # raw output
 
     ws["A1"] = "Name"
     ws["B1"] = "Description"
@@ -30,7 +20,7 @@ def satelliteMap2Excel(satMap: dict) -> None:
     ws["G1"] = "Timestamp"
 
     currRow = 2
-    for entry in satMap.values():
+    for entry in satelliteList:
         ws.cell(currRow, 1, entry["name"])
         ws.cell(currRow, 2, entry["description"])
         ws.cell(currRow, 3, entry["norad_cat_id"])
@@ -40,23 +30,19 @@ def satelliteMap2Excel(satMap: dict) -> None:
         ws.cell(currRow, 7, entry["time"])
         currRow += 1
 
-    ws = wb.create_sheet("Filtered", 1)  # create tab for filtered output
-    
-    # code to output filtered result
-    
-    ws = wb.create_sheet("Sorted", 1)  # create tab for sorted output
-    
-    # code to output most recent result
+    ws = wb.create_sheet("Filtered", 1)  # filtered output
+    ws = wb.create_sheet("Sorted", 1)  # sorted output
 
-    # save Workbook to Excel file
-    wb.save(DIR)
+    # save to file
+    wb.save('D:\\satnogs_satellites.xlsx')
 
     return
 
 
 # driver
-satelliteDict = satnogs_api.getSatellites()
-for v in satelliteDict.values():
+satelliteList = satnogs_api.getSatellites()
+filter = satnogs_selection.satelliteFilter(satelliteList)
+sort = satnogs_selection.sortMostRecent(filter)
+export(sort)
+for v in sort:
     print(v, end="\n")
-
-satelliteMap2Excel(satelliteDict)
