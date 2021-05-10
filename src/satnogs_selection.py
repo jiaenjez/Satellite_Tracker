@@ -1,6 +1,7 @@
 def satelliteFilter(satelliteList: [dict], mode: str = "AFSK", baud: int = 1200) -> [dict]:
     # filter the list of satellite by modulation mode and baud rate
-    return [sat for sat in satelliteList if sat["mode"] is not None and mode in sat["mode"] == mode and sat["baud"] == baud]
+    return [sat for sat in satelliteList if sat["mode"] is not None and mode in sat["mode"]
+            and sat["baud"] is not None and sat["baud"] == baud]
 
 
 def sortMostRecent(satelliteList: [dict], recent: bool = True) -> [dict]:
