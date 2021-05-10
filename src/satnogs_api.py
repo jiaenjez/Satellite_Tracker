@@ -10,12 +10,7 @@ CELESTRAK_URL = "https://www.celestrak.com/satcat/tle.php?CATNR=46287"
 
 
 def getID() -> set:
-    satellites = requests.get(SATELLITE_URL).json()
-    noradId = set()
-    for x in satellites:
-        noradId.add(x["norad_cat_id"])
-
-    return noradId
+    return {sat["norad_cat_id"] for sat in requests.get(SATELLITE_URL).json()}
 
 
 def getSatellites() -> [dict]:
