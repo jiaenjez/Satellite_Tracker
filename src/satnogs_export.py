@@ -7,11 +7,11 @@ def newWorkbook() -> openpyxl.Workbook:
     return openpyxl.Workbook()
 
 
-def newTab(wb: openpyxl.Workbook, tabName: str, tabIndex: int = 0) -> openpyxl.Workbook().worksheets:
+def newTab(wb: openpyxl.Workbook, tabName: str, tabIndex: int = 0) -> openpyxl.Workbook.worksheets:
     return wb.create_sheet(tabName, tabIndex)
 
 
-def addHeader(ws: openpyxl.Workbook().worksheets) -> None:
+def addHeader(ws: openpyxl.Workbook.worksheets) -> None:
     ws["A1"] = "Name"
     ws["B1"] = "Description"
     ws["C1"] = "Norad_cat_id"
@@ -53,5 +53,6 @@ allSatellite = satnogs_api.getSatellites()
 filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
 sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
 export(allSatellite, 'D:\\satnogs_satellites.xlsx')
+print(type(openpyxl.Workbook()))
 for v in sortedSatellite:
     print(v, end="\n")
