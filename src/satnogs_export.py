@@ -56,6 +56,9 @@ def exportTab(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
 
 
 def exportTLE(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
+    if not result:  # if list is empty, do nothing
+        return
+
     ws = newTab(wb, "TLE", tab)
 
     ws["A1"] = "tle0"
