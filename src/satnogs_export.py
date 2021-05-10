@@ -53,6 +53,5 @@ allSatellite = satnogs_api.getSatellites()
 filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
 sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
 export(allSatellite, 'D:\\satnogs_satellites.xlsx')
-print(type(openpyxl.Workbook()))
 for v in sortedSatellite:
     print(v, end="\n")
