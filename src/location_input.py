@@ -21,6 +21,10 @@ def getLatLong(loc: str) -> (float, float):
 
 
 def bingGeocoding() -> (float, float):
+    """
+
+    :return:
+    """
     pass
 
 
