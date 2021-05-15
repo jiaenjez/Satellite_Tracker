@@ -5,7 +5,7 @@ TRANSMITTER_URL = "https://db.satnogs.org/api/transmitters/?key=36ff1b885dafa497
 SATELLITE_URL = "https://db.satnogs.org/api/satellites/?key=36ff1b885dafa497e93073092cdac1c9887e510c&format=json"
 TLE_URL = "https://db.satnogs.org/api/tle/?key=36ff1b885dafa497e93073092cdac1c9887e510c&format=json"
 TELEMETRY_URL = ""
-CELESTRAK_URL = "https://www.celestrak.com/satcat/tle.php?CATNR=46287"
+CELESTRAK_URL = ""
 
 
 def getID() -> set:
