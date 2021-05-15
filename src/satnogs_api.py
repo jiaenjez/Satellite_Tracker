@@ -13,6 +13,10 @@ def getID() -> set:
 
 
 def getSatellites() -> [dict]:
+    """
+
+    :return: A list of all available Satellite's basic info from Satnogs
+    """
     sat = {s["norad_cat_id"]: s["name"] for s in requests.get(SATELLITE_URL).json()}
 
     return [{"name": sat[s["norad_cat_id"]], "description": s["description"],
@@ -23,5 +27,9 @@ def getSatellites() -> [dict]:
 
 
 def getTLE() -> [dict]:
+    """
+
+    :return: A list of all available Satellite's TLE from Satnogs
+    """
     # get TLE response from api, TLE is used to calculate flight path
     return [tle for tle in requests.get(TLE_URL).json()]

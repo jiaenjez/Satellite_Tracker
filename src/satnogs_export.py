@@ -8,17 +8,32 @@ TLE_DIR = 'D:\\tle.save'
 
 
 def newWorkbook() -> openpyxl.Workbook:
-    # create a new openpyxl excel object
+    """
+
+    :return: A new Excel file object
+    """
     return openpyxl.Workbook()
 
 
 def newTab(wb: openpyxl.Workbook, tabName: str, tabIndex: int = 0) -> openpyxl.Workbook.worksheets:
-    # create a new tab in excel
+    """
+
+    :param wb: Excel file object
+    :param tabName: Name of the current Excel tab
+    :param tabIndex: Index of the current Excel tab, start from 0
+    :return:
+    """
     return wb.create_sheet(tabName, tabIndex)
 
 
 def addHeader(ws: openpyxl.Workbook.worksheets) -> None:
-    # add these headers to row 1 of current excel tab
+    """
+
+    Add these fix header into current Excel tab
+
+    :param ws: A specific worksheet object within an Excel file object
+    :return:
+    """
     ws["A1"] = "Name"
     ws["B1"] = "Description"
     ws["C1"] = "Norad_cat_id"
@@ -29,6 +44,15 @@ def addHeader(ws: openpyxl.Workbook.worksheets) -> None:
 
 
 def exportData(ws: openpyxl.Workbook.worksheets, result: [dict]) -> None:
+    """
+
+    Export Satellite information on to current Excel worksheet
+
+    :param ws: A specific worksheet object within an Excel file object
+    :param result: Filtered Satellite data from API
+    :return:
+    """
+
     for r in range(2, len(result) + 2):
         entry = result[r - 2]
 
@@ -41,10 +65,14 @@ def exportData(ws: openpyxl.Workbook.worksheets, result: [dict]) -> None:
         ws.cell(r, 7, entry["time"])
 
 
-def saveTLE(tle: [dict]) -> None:
-    # save a copy of TLE into a text file
+def saveTLE(TLE: [dict]) -> None:
+    """
+
+    :param TLE: list of raw TLE data from API
+    :return:
+    """
     f = open(TLE_DIR, 'w')
-    for r in tle:
+    for r in TLE:
         for v in r.values():
             f.write(str(v) + "\n")
 
@@ -52,7 +80,12 @@ def saveTLE(tle: [dict]) -> None:
 
 
 def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
-    # save openpyxl workbook to specified directory as an excel file
+    """
+
+    :param wb: Excel file object
+    :param dir: Directory to save Excel file
+    :return:
+    """
     wb.save(dir)
 
 
@@ -89,13 +122,13 @@ def exportTLE(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
 allSatellite = satnogs_api.getSatellites()
 filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
 sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
-tle = satnogs_selection.tleFilter(sortedSatellite)
+TLE = satnogs_selection.tleFilter(sortedSatellite)
 
 wb = newWorkbook()
 exportTab(wb, 0, allSatellite)
 exportTab(wb, 1, filteredSatellite)
 exportTab(wb, 2, sortedSatellite)
-exportTLE(wb, 3, tle)
+exportTLE(wb, 3, TLE)
 
 saveFile(wb, EXCEL_DIR)
-saveTLE(tle)
+saveTLE(TLE)
