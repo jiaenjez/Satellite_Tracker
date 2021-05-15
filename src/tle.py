@@ -11,6 +11,7 @@ class tle:
     def __init__(self) -> None:
         self.name = ""
         self.height = 0
+        # self.velocity = x
 
     def __init_(self, raw: [dict]) -> None:
         #  consider using tleFormat() here?
