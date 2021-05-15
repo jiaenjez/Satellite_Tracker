@@ -100,6 +100,14 @@ def exportTab(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
 
 
 def exportTLE(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
+    """
+
+    :param wb:
+    :param tab:
+    :param result:
+    :return:
+    """
+
     if not result:  # if list is empty, do nothing
         return
 
