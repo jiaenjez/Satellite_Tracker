@@ -3,7 +3,8 @@ import openpyxl  # excel
 from datetime import datetime
 
 TABSNAME = {0: "allSatellite", 1: "filteredSatellite", 2: "sortedSatellite", 3: "TLE"}
-DIR = 'D:\\satnogs_satellites.xlsx'
+EXCEL_DIR = 'D:\\satnogs_satellites.xlsx'
+TLE_DIR = 'D:\\tle.save'
 
 
 def newWorkbook() -> openpyxl.Workbook:
@@ -40,6 +41,16 @@ def exportData(ws: openpyxl.Workbook.worksheets, result: [dict]) -> None:
         ws.cell(r, 7, entry["time"])
 
 
+def saveTLE(tle: [dict]) -> None:
+    # save a copy of TLE into a text file
+    f = open(TLE_DIR, 'w')
+    for r in tle:
+        for v in r.values():
+            f.write(str(v) + "\n")
+
+    f.close()
+
+
 def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
     # save openpyxl workbook to specified directory as an excel file
     wb.save(dir)
@@ -74,7 +85,7 @@ def exportTLE(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
             ws.cell(r + 2, c + 1, list(result[r].values())[c])
 
 
-## driver
+# driver
 allSatellite = satnogs_api.getSatellites()
 filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
 sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
@@ -86,4 +97,5 @@ exportTab(wb, 1, filteredSatellite)
 exportTab(wb, 2, sortedSatellite)
 exportTLE(wb, 3, tle)
 
-saveFile(wb, DIR)
+saveFile(wb, EXCEL_DIR)
+saveTLE(tle)
