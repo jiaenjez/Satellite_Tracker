@@ -31,7 +31,7 @@ def sortMostRecent(satelliteList: [dict], recent: bool = True) -> [dict]:
 
 def getNoradID(satelliteList: [dict]) -> {str}:
     """
-    get a set of NoradID from dict, using set instead of list to improve
+    get a set of NoradID from dict, using set to improve
     search performance from O(n) to O(1)
 
     :param satelliteList: List of Satellite information from Satnogs
