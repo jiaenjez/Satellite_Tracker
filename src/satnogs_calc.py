@@ -9,6 +9,8 @@ from datetime import datetime
 
 def getPasses(tleList: [tle.tle], latLong: (float, float), startDatetime: datetime, endDatetime: datetime) -> [flightPath]:
     """
+    get a list flightPath object of all passes over certain LatLong
+    example: getPasses(tleList, "Irvine", ...) -> [ISS, AMICALSAT, BOBCATSAT, ....]
 
     :param tleList: A list of tle object
     :param latLong: latitude, longitude pair of ground station in degrees
