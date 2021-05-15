@@ -24,5 +24,4 @@ def getSatellites() -> [dict]:
 
 def getTLE() -> [dict]:
     # get TLE response from api, TLE is used to calculate flight path
-
     return [tle for tle in requests.get(TLE_URL).json()]
