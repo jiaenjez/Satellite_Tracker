@@ -7,6 +7,15 @@ import ephem  # TLE calculation
 from datetime import datetime
 
 
+"""
+ Satellite elements go rapidly out of date. You will want to pay attention to the “epoch”
+ — the date on which an element set is most accurate — of every TLE element set you use. 
+ Elements are only useful for a week or two on either side of the epoch date. 
+ For later dates, you will want to download a fresh set of elements. 
+ For earlier dates, you will want to pull an old TLE from the archives. 
+"""
+
+
 def getPasses(tleList: [tle.tle], latLong: (float, float), startDatetime: datetime, endDatetime: datetime) -> [flightPath]:
     """
     get a list flightPath object of all passes over certain LatLong
