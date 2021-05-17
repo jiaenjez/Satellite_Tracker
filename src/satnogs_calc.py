@@ -4,7 +4,9 @@ from src import tle
 from src import flightPath
 import skyfield  # TLE calculation
 import ephem  # TLE calculation
+from skyfield.api import EarthSatellite
 from datetime import datetime
+
 
 
 """
