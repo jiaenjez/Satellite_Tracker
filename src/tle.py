@@ -9,9 +9,14 @@ def tleFormat(TLE: [dict]) -> [dict]:
 # C-style struct
 class tle(object):
     def __init__(self) -> None:
-        self.name = ""
-        self.height = 0
-        self.elevation = 0
+        self.identifier = None
+        self.epoch = None
+        self.inclination = None
+        self.ascension = None
+        self.eccentricity = None
+        self.perigee = None
+        self.anomaly = None
+        self.motion = None
 
 
     def __init_(self, raw: [dict]) -> None:
