@@ -1,6 +1,5 @@
 import requests  # json
 
-GOOGLE_API_KEY = ""  # Insert API key here
 BING_API_KEY = "AlG8wXq_mQ7kAhYeZzRQPsRPaFxei31_kBCmTW9P_RFOkhFBr1HCl9eT0NTkwEen"  # Insert API key here
 BING_BASE_URL = "http://dev.virtualearth.net/REST/v1/Locations/US/{adminDistrict}/{postalCode}/{locality}/{" \
                 "addressLine}?includeNeighborhood={includeNeighborhood}&include={includeValue}&maxResults={" \
