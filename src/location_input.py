@@ -7,29 +7,33 @@ BING_BASE_URL = "http://dev.virtualearth.net/REST/v1/Locations/US/{adminDistrict
                 "maxResults}&key={BingMapsAPIKey}"
 
 
-def getLocation() -> str:
-    #  return input("Address: ")
-    """
-
-    :return: User Input of Address
-    """
-    temp = "University of California, Irvine"
-    ret = str()
-
-    for c in temp:
-        if c == " ":
-            ret += "%20"
-        else:
-            ret += c
-    return ret
+# def getLocation() -> str:
+#     #  return input("Address: ")
+#     """
+#
+#     :return: User Input of Address
+#     """
+#     temp = "University of California, Irvine"
+#     ret = str()
+#
+#     for c in temp:
+#         if c == " ":
+#             ret += "%20"
+#         else:
+#             ret += c
+#     return ret
 
 
 def getURL() -> str:
+    country = "US"
     adminDistrict = "CA"
     postalCode = "92697"
-    locality = "Irvine"
-    addressLine = getLocation()
-    url = f'http://dev.virtualearth.net/REST/v1/Locations/US/{adminDistrict}/{postalCode}/{locality}/{addressLine}?o=json&key={BING_API_KEY}'
+    city = "Irvine"
+    addressLine = "University%20of%20California,%20Irvine"
+    rFormat = "json"
+    url = f'http://dev.virtualearth.net/REST/v1/Locations/' \
+          f'{country}/{adminDistrict}/{postalCode}/{city}/{addressLine}?' \
+          f'o={rFormat}&key={BING_API_KEY}'
 
     return url
 
@@ -41,11 +45,7 @@ def getLatLong(loc: str) -> [float, float]:
     :return: Pair of LatLong
     """
 
-    adminDistrict = "CA"
-    postalCode = "92697"
-    locality = "Irvine"
-    addressLine = getLocation()
-    url = f'http://dev.virtualearth.net/REST/v1/Locations/US/{adminDistrict}/{postalCode}/{locality}/{addressLine}?o=json&key={BING_API_KEY}'
+    url = getURL()
     response = requests.get(url).json()
 
     return response["resourceSets"][0]["resources"][0]["point"]["coordinates"]
@@ -59,5 +59,5 @@ def bingGeocoding() -> [float, float]:
     pass
 
 
-def googleGeocoding() -> (float, float):
+def googleGeocoding() -> [float, float]:
     pass
