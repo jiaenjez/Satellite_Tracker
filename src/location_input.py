@@ -49,15 +49,3 @@ def getLatLong(loc: str) -> [float, float]:
     response = requests.get(url).json()
 
     return response["resourceSets"][0]["resources"][0]["point"]["coordinates"]
-
-
-def bingGeocoding() -> [float, float]:
-    """
-
-    :return:
-    """
-    pass
-
-
-def googleGeocoding() -> [float, float]:
-    pass
