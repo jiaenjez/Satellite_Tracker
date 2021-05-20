@@ -79,7 +79,7 @@ def testTimeZoneConversion():
 
 # driver
 response = testGetTLE()  # loading from API every time is slow, should load from a file instead
-xyz = testGenerateSatellite(response)
+xyz = testGeneratePath(response)
 for l in xyz:
     print(l)
 
