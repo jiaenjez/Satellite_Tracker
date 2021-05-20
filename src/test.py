@@ -55,7 +55,7 @@ def testGeneratePath(lines: [str, str, str]):
     y = []
     z = []
     start = 0
-    end = 960
+    end = 600
 
     for minute in range(start, end):
         t = ts.utc(2021, 5, 22, 10, minute, 0)  # how can I specify time in a better way than doing this???
@@ -69,16 +69,16 @@ def testGeneratePath(lines: [str, str, str]):
     print("flightPath start time: ", ts.utc(2021, 5, 22, 10, start, 0).utc_strftime())
     print("flightPath end time: ", ts.utc(2021, 5, 22, 10, end - 1, 0).utc_strftime())
 
-    print(x)
-    print(y)
-    print(z)
+    # print(x)
+    # print(y)
+    # print(z)
 
     for l in xyz:
         print(l)
 
     pyplot.axes(projection='3d')
     pyplot.plot(x, y, z, 'red')
-    pyplot.title("Flight Path")
+    pyplot.title("Geocentric Flight Path")
     pyplot.show()  # should show a elliptical graph
 
 
@@ -137,7 +137,5 @@ driver
 
 response = testGetTLE()  # loading from API every time is slow, should load from a file instead
 testGeneratePath(response)
-
 # testPlot()
-
 # testTimeZoneConversion()
