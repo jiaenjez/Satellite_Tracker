@@ -1,6 +1,7 @@
 from src import satnogs_api, satnogs_selection, satnogs_calc, location_input
 from skyfield.api import EarthSatellite, load
 import requests
+import pytz
 
 
 def testLocation() -> None:
@@ -28,7 +29,7 @@ def testGetTLE() -> [str, str]:
     line1 = ""
     line2 = ""
     for l in TLEs:
-        if "amicalsat" in str(l["tle0"]).lower():
+        if "amicalsat" == str(l["tle0"]).lower():
             line0 = l["tle0"]
             line1 = l["tle1"]
             line2 = l["tle2"]
@@ -59,7 +60,25 @@ def testGenerateSatellite(lines: [str, str, str]):
     return xyz
 
 
-response = testGetTLE()  # loading from API every time is slow, should load from a file instead
-xyz = testGenerateSatellite(response)
-for l in xyz:
-    print(l)
+def testTimeZoneConversion():
+    pacificTimeZone = pytz.timezone("US/Pacific")
+    centralTimeZone = pytz.timezone("US/Central")
+    ts = load.timescale()
+    t = ts.now()
+    dt = t.utc_datetime()
+    cst = t.astimezone(centralTimeZone)
+    pst = t.astimezone(pacificTimeZone)
+    print("Curr Time in UTC: ", dt)
+    print("Curr Time in CST: ", cst)
+    print("Curr Time in PST: ", pst)
+
+
+# driver
+# response = testGetTLE()  # loading from API every time is slow, should load from a file instead
+# xyz = testGenerateSatellite(response)
+# for l in xyz:
+#     print(l)
+
+testTimeZoneConversion()
+
+
