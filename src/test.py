@@ -5,6 +5,7 @@ from skyfield.api import EarthSatellite, load
 import requests
 import pytz
 import numpy
+from mpl_toolkits import mplot3d
 
 
 
@@ -54,7 +55,7 @@ def testGeneratePath(lines: [str, str, str]):
     y = []
     z = []
     start = 0
-    end = 120
+    end = 960
 
     for minute in range(start, end):
         t = ts.utc(2021, 5, 22, 10, minute, 0)  # how can I specify time in a better way than doing this???
@@ -75,7 +76,9 @@ def testGeneratePath(lines: [str, str, str]):
     for l in xyz:
         print(l)
 
-    pyplot.plot(x, y)
+    pyplot.axes(projection='3d')
+    pyplot.plot(x, y, z, 'red')
+    pyplot.title("Flight Path")
     pyplot.show()  # should show a elliptical graph
 
 
