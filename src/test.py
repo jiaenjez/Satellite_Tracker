@@ -76,7 +76,7 @@ def testGeneratePath(lines: [str, str, str]):
         print(l)
 
     pyplot.plot(x, y)
-    pyplot.show()
+    pyplot.show()  # should show a elliptical graph
 
 
 def testTimeZoneConversion():
