@@ -35,7 +35,8 @@ def testGetTLE() -> [str, str]:
 
     ts = load.timescale()
     t = ts.now()
-    print(t.utc_strftime())
+    print("Satellite: ", l["tle0"])
+    print("Curr Time:", t.utc_strftime())
 
     return [line0, line1, line2]
 
@@ -44,16 +45,21 @@ def testGenerateSatellite(lines: [str, str, str]):
     satellite = EarthSatellite(lines[1], lines[2], lines[0], load.timescale())
     ts = load.timescale()
     xyz = []
+    start = 0
+    end = 20
 
-    for minute in range(0, 20):
+    for minute in range(start, end):
         t = ts.utc(2021, 5, 22, 10, minute, 0)  # how can I specify time in a better way than doing this???
         geocentric = satellite.at(t)
         xyz.append(geocentric.position.km)
 
+    print("flightPath start time: ", ts.utc(2021, 5, 22, 10, start, 0).utc_strftime())
+    print("flightPath end time: ", ts.utc(2021, 5, 22, 10, end - 1, 0).utc_strftime())
+
     return xyz
 
 
-response = testGetTLE()
+response = testGetTLE()  # loading from API every time is slow, should load from a file instead
 xyz = testGenerateSatellite(response)
 for l in xyz:
     print(l)
