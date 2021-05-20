@@ -1,6 +1,6 @@
 from src import satnogs_api
 from src import satnogs_selection
-from src import tle
+# from src import tle
 from src import flightPath
 import skyfield  # TLE calculation
 import ephem  # TLE calculation
@@ -18,7 +18,7 @@ from datetime import datetime
 """
 
 
-def getPasses(tleList: [tle.tle], latLong: (float, float), startDatetime: datetime, endDatetime: datetime) -> [flightPath]:
+def getPasses(tleList: [], latLong: (float, float), startDatetime: datetime, endDatetime: datetime) -> [flightPath]:
     """
     get a list flightPath object of all passes over certain LatLong
     example: getPasses(tleList, "Irvine", ...) -> [ISS, AMICALSAT, BOBCATSAT, ....]
