@@ -42,7 +42,7 @@ def testGetTLE() -> [str, str]:
     return [line0, line1, line2]
 
 
-def testGenerateSatellite(lines: [str, str, str]):
+def testGeneratePath(lines: [str, str, str]):
     satellite = EarthSatellite(lines[1], lines[2], lines[0], load.timescale())
     ts = load.timescale()
     xyz = []
@@ -61,6 +61,10 @@ def testGenerateSatellite(lines: [str, str, str]):
 
 
 def testTimeZoneConversion():
+    """
+
+    :return:
+    """
     pacificTimeZone = pytz.timezone("US/Pacific")
     centralTimeZone = pytz.timezone("US/Central")
     ts = load.timescale()
@@ -74,11 +78,11 @@ def testTimeZoneConversion():
 
 
 # driver
-# response = testGetTLE()  # loading from API every time is slow, should load from a file instead
-# xyz = testGenerateSatellite(response)
-# for l in xyz:
-#     print(l)
+response = testGetTLE()  # loading from API every time is slow, should load from a file instead
+xyz = testGenerateSatellite(response)
+for l in xyz:
+    print(l)
 
-testTimeZoneConversion()
+# testTimeZoneConversion()
 
 
