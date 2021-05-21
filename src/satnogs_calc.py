@@ -74,7 +74,7 @@ def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 
         lat.append(currLatLong.latitude.degrees)
         long.append(currLatLong.longitude.degrees)
 
-    return lat, long, (x, y)
+    return lat, long, (x, y), t
 
 
 def getOrbitPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.0) -> ([], [], [], []):
