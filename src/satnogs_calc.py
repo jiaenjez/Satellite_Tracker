@@ -16,7 +16,7 @@ from datetime import datetime
 """
 
 
-def loadTLE() -> dict:
+def loadTLE() -> [dict]:
     """
 
     :return:
