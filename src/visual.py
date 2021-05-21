@@ -2,10 +2,12 @@ from matplotlib import pyplot
 from src import satnogs_calc
 
 
-def updatePath(lat: [float], long: [float], start: (float, float)) -> None:
+def updatePath(lat: [float], long: [float], start: (float, float), timestamp) -> None:
     fig, ax = pyplot.subplots(figsize=(20, 10))
     ax.plot(long, lat, 'black')
-    ax.annotate("▀█▀", start, color='red')
+    ax.annotate(f'▀█▀ {start[0]:.4f}, {start[1]:.4f} @ {timestamp.utc_strftime()}', start, color='red')
+    ax.annotate(f'△ {"UC Irvine"}', (-117.841132, 33.643831), color='red')
+    ax.annotate(f'△ {"CityLine, TX"}', (-96.697442, 32.999553), color='red')
     ax.set(xlabel='longitude', ylabel='latitude')
     ax.grid()
 
@@ -19,17 +21,17 @@ def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
     pyplot.figure(3)
     pyplot.axes(xlabel='time (sec)', ylabel='altitude (km)')
     pyplot.plot(h, 'blue')
-    pyplot.title("Flight Altitude")
+    pyplot.title("Flight Altitudgme")
     pyplot.grid()
 
 
-duration = 4 * 3600
-resolution = 4.0
+duration = 10 * 3600
+resolution = 1.0
 
 tle = satnogs_calc.loadTLE()
 response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
-lat, long, start = satnogs_calc.getLatLongPath(response, duration, resolution)
+lat, long, start, t = satnogs_calc.getLatLongPath(response, duration, resolution)
 x, y, z, h = satnogs_calc.getOrbitPath(response, duration, resolution)
-updatePath(lat, long, start)
-updateOrbit(x, y, z, h)
+updatePath(lat, long, start, t)
+# updateOrbit(x, y, z, h)
 pyplot.show()
