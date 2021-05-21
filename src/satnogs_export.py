@@ -79,6 +79,15 @@ def saveTLE(TLE: [dict]) -> None:
     f.close()
 
 
+def loadTLE() -> [dict]:
+    """
+
+    :param TLE: list of raw TLE data from API
+    :return:
+    """
+    pass
+
+
 def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
     """
 
