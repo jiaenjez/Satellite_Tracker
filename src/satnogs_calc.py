@@ -1,10 +1,7 @@
-from src import satnogs_api
-from src import satnogs_selection
-# from src import tle
-from src import flightPath
-import skyfield  # TLE calculation
-import ephem  # TLE calculation
-from skyfield.api import EarthSatellite
+import numpy
+from skyfield.toposlib import wgs84
+from src import flightPath, satnogs_api, satnogs_selection
+from skyfield.api import EarthSatellite, load
 from datetime import datetime
 
 
@@ -16,6 +13,86 @@ from datetime import datetime
  For later dates, you will want to download a fresh set of elements. 
  For earlier dates, you will want to pull an old TLE from the archives. 
 """
+
+
+def loadTLE():
+    allSatellite = satnogs_api.getSatellites()
+    filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
+    sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
+    return satnogs_selection.tleFilter(sortedSatellite)
+
+
+def getTLELineResponse(tleSet: [], target: str) -> []:
+    """
+
+    :param tleSet: set of TLEs from api
+    :param target: name of desired Satellite
+    :return: Two-line Element
+    """
+    TLEs = tleSet
+    name = ""
+    line1 = ""
+    line2 = ""
+    for r in TLEs:
+        if target.lower() == str(r["tle0"]).lower():
+            name = r["tle0"]
+            line1 = r["tle1"]
+            line2 = r["tle2"]
+            break
+
+    return [name, line1, line2]
+
+
+def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.0) -> ([], []):
+    """
+
+    :param lines: TLE response
+    :param duration: flight duration
+    :param resolution: number of calculation per second
+    :return: list of LatLongs
+    """
+    satellite = EarthSatellite(lines[1], lines[2], lines[0], load.timescale())
+    ts = load.timescale()
+    t = ts.now()
+    start = t.utc.second
+    end = start + duration
+    lat = []
+    long = []
+    y = wgs84.subpoint(satellite.at(t)).latitude.degrees
+    x = wgs84.subpoint(satellite.at(t)).longitude.degrees
+
+    for sec in numpy.arange(start - 600, end, resolution * 60.0):
+        currTime = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, sec)
+        currLoc = satellite.at(currTime)
+        currLatLong = wgs84.subpoint(currLoc)
+        lat.append(currLatLong.latitude.degrees)
+        long.append(currLatLong.longitude.degrees)
+
+    return lat, long, (x, y)
+
+
+def getOrbitPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.0) -> ([], [], [], []):
+    satellite = EarthSatellite(lines[1], lines[2], lines[0], load.timescale())
+    ts = load.timescale()
+    t = ts.now()
+    start = t.utc.second
+    end = start + duration
+    x = []
+    y = []
+    z = []
+    h = []
+
+    for sec in numpy.arange(start, end, resolution * 60.0):
+        currTime = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, sec)
+        currLoc = satellite.at(currTime)
+        x.append(currLoc.position.km[0])
+        y.append(currLoc.position.km[1])
+        z.append(currLoc.position.km[2])
+        point = numpy.array((currLoc.position.km[0], currLoc.position.km[1], currLoc.position.km[2]))
+        center = numpy.array((0, 0, 0))
+        h.append(numpy.linalg.norm(point - center))
+
+    return x, y, z, h
 
 
 def getPasses(tleList: [], latLong: (float, float), startDatetime: datetime, endDatetime: datetime) -> [flightPath]:
