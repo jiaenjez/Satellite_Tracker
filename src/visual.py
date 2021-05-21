@@ -26,7 +26,7 @@ def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
 
 
 duration = 10 * 3600
-resolution = 4.0
+resolution = 1.0
 
 tle = satnogs_calc.loadTLE()
 response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
