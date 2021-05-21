@@ -1,11 +1,10 @@
 from matplotlib import pyplot
-
 from src import satnogs_api, satnogs_selection, satnogs_calc, location_input
 from skyfield.api import EarthSatellite, load, wgs84
 import requests
 import pytz
 import numpy
-from mpl_toolkits import mplot3d
+
 
 
 def testLocation() -> None:
@@ -54,6 +53,34 @@ def testCurrLocation(lines: [str, str, str]):
     latlong = wgs84.subpoint(currLoc)
     print("curr XYZ: ", currLoc.position.km[0], currLoc.position.km[1], currLoc.position.km[2])
     print("curr LatLong: ", latlong.latitude, latlong.longitude)
+
+
+def testLatLongPath(lines: [str, str, str]) -> ([], []):
+    satellite = EarthSatellite(lines[1], lines[2], lines[0], load.timescale())
+    ts = load.timescale()
+    t = ts.now()
+    start = t.utc.second
+    end = start + 3600
+    lat = []
+    long = []
+
+    for sec in numpy.arange(start, end, 0.25):
+        currTime = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.minute, sec)
+        currLoc = satellite.at(currTime)
+        currLatLong = wgs84.subpoint(currLoc)
+        lat.append(currLatLong.latitude.degrees)
+        long.append(currLatLong.longitude.degrees)
+
+    # print(lat, long)
+
+    fig, ax = pyplot.subplots(figsize=(20, 10))
+    ax.plot(long, lat)
+    ax.set(xlabel='longitude', ylabel='latitude')
+    ax.grid()
+    pyplot.show()
+
+    return lat, long
+
 
 
 def testGeneratePath(lines: [str, str, str]):
@@ -150,5 +177,6 @@ driver
 """
 
 response = testGetTLE()  # loading from API every time is slow, should load from a file instead
-testCurrLocation(response)
-testGeneratePath(response)
+# testCurrLocation(response)
+# testGeneratePath(response)
+testLatLongPath(response)
