@@ -1,12 +1,11 @@
 from matplotlib import pyplot
 
 from src import satnogs_api, satnogs_selection, satnogs_calc, location_input
-from skyfield.api import EarthSatellite, load
+from skyfield.api import EarthSatellite, load, wgs84
 import requests
 import pytz
 import numpy
 from mpl_toolkits import mplot3d
-
 
 
 def testLocation() -> None:
@@ -38,13 +37,22 @@ def testGetTLE() -> [str, str]:
             line0 = l["tle0"]
             line1 = l["tle1"]
             line2 = l["tle2"]
+            print("Satellite: ", l["tle0"])
 
     ts = load.timescale()
     t = ts.now()
-    print("Satellite: ", l["tle0"])
     print("Curr Time:", t.utc_strftime())
 
     return [line0, line1, line2]
+
+
+def testCurrLocation(lines: [str, str, str]):
+    satellite = EarthSatellite(lines[1], lines[2], lines[0], load.timescale())
+    ts = load.timescale()
+    currLoc = satellite.at(ts.now())
+    latlong = wgs84.subpoint(currLoc)
+    print("curr XYZ: ", currLoc.position.km[0], currLoc.position.km[1], currLoc.position.km[2])
+    print("curr LatLong: ", latlong.latitude, latlong.longitude)
 
 
 def testGeneratePath(lines: [str, str, str]):
@@ -54,32 +62,38 @@ def testGeneratePath(lines: [str, str, str]):
     x = []
     y = []
     z = []
+    h = []
     start = 0
-    end = 600
+    end = int(1/4 * 1440)  # 6 hr
+    # end = 30 * 1440  # a month
 
     for minute in range(start, end):
-        t = ts.utc(2021, 5, 22, 10, minute, 0)  # how can I specify time in a better way than doing this???
+        # how can I specify time in a better way than doing this???
+        t = ts.utc(2021, 5, 22, 0, minute, 0)
         # need to build some kind of time array
         geocentric = satellite.at(t)
-        xyz.append(geocentric.position.km)
+        # xyz.append(geocentric.position.km)
         x.append(geocentric.position.km[0])
         y.append(geocentric.position.km[1])
         z.append(geocentric.position.km[2])
+        p = numpy.array((geocentric.position.km[0], geocentric.position.km[1], geocentric.position.km[2]))
+        o = numpy.array((0, 0, 0))
+        h.append(numpy.linalg.norm(p - o))
 
     print("flightPath start time: ", ts.utc(2021, 5, 22, 10, start, 0).utc_strftime())
     print("flightPath end time: ", ts.utc(2021, 5, 22, 10, end - 1, 0).utc_strftime())
 
-    # print(x)
-    # print(y)
-    # print(z)
-
-    for l in xyz:
-        print(l)
-
-    pyplot.axes(projection='3d')
+    pyplot.figure(1)
+    pyplot.axes(projection='3d', xlabel='x (km)', ylabel='y (km)', zlabel='z (km)')
     pyplot.plot(x, y, z, 'red')
     pyplot.title("Geocentric Flight Path")
-    pyplot.show()  # should show a elliptical graph
+
+    pyplot.figure(2)
+    pyplot.axes(xlabel='time (min)', ylabel='altitude (km)')
+    pyplot.plot(h, 'blue')
+    pyplot.title("Flight Altitude")
+    pyplot.grid()
+    pyplot.show()
 
 
 def testTimeZoneConversion():
@@ -130,12 +144,12 @@ def testPlot():
     pyplot.show()
 
 
-
 """
 driver
 """
 
 response = testGetTLE()  # loading from API every time is slow, should load from a file instead
 testGeneratePath(response)
+# testCurrLocation(response)
 # testPlot()
 # testTimeZoneConversion()
