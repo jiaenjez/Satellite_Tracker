@@ -1,3 +1,5 @@
+import time
+
 import numpy
 from skyfield.toposlib import wgs84
 from src import flightPath, satnogs_api, satnogs_selection
@@ -19,9 +21,11 @@ def loadTLE() -> dict:
 
     :return:
     """
+    timer = time.perf_counter()
     allSatellite = satnogs_api.getSatellites()
     filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
     sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
+    print(f'loadTLE took {time.perf_counter() - timer:.3f} second to process')
     return satnogs_selection.tleFilter(sortedSatellite)
 
 
@@ -56,6 +60,7 @@ def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 
     :return: list of LatLongs and starting location
 
     """
+    timer = time.perf_counter()
     satellite = EarthSatellite(lines[1], lines[2], lines[0], load.timescale())
     ts = load.timescale()
     t = ts.now()
@@ -73,6 +78,7 @@ def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 
         lat.append(currLatLong.latitude.degrees)
         long.append(currLatLong.longitude.degrees)
 
+    print(f'getLatLongPath {time.perf_counter() - timer:.3f} second to process')
     return lat, long, (x, y), t
 
 
@@ -85,6 +91,7 @@ def getOrbitPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.
     :return:
     """
 
+    timer = time.perf_counter()
     satellite = EarthSatellite(lines[1], lines[2], lines[0], load.timescale())
     ts = load.timescale()
     t = ts.now()
@@ -105,6 +112,7 @@ def getOrbitPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.
         center = numpy.array((0, 0, 0))
         h.append(numpy.linalg.norm(point - center))
 
+    print(f'getOrbitPath {time.perf_counter() - timer:.3f} second to process')
     return x, y, z, h
 
 
