@@ -38,6 +38,7 @@ def testGetTLE() -> [str, str]:
             line1 = l["tle1"]
             line2 = l["tle2"]
             print("Satellite: ", l["tle0"])
+            break
 
     ts = load.timescale()
     t = ts.now()
@@ -149,7 +150,5 @@ driver
 """
 
 response = testGetTLE()  # loading from API every time is slow, should load from a file instead
+testCurrLocation(response)
 testGeneratePath(response)
-# testCurrLocation(response)
-# testPlot()
-# testTimeZoneConversion()
