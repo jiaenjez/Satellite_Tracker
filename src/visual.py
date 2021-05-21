@@ -19,14 +19,14 @@ def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
     pyplot.title("Geocentric Flight Path")
 
     pyplot.figure(3)
-    pyplot.axes(xlabel='time (sec)', ylabel='altitude (km)')
+    pyplot.axes(xlabel='time (min)', ylabel='altitude (km)')
     pyplot.plot(h, 'blue')
     pyplot.title("Flight Altitude")
     pyplot.grid()
 
 
-duration = 1 * 3600
-resolution = 1.0
+duration = 10 * 3600
+resolution = 4.0
 
 tle = satnogs_calc.loadTLE()
 response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
