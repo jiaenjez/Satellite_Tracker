@@ -21,11 +21,11 @@ def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
     pyplot.figure(3)
     pyplot.axes(xlabel='time (sec)', ylabel='altitude (km)')
     pyplot.plot(h, 'blue')
-    pyplot.title("Flight Altitudgme")
+    pyplot.title("Flight Altitude")
     pyplot.grid()
 
 
-duration = 10 * 3600
+duration = 1 * 3600
 resolution = 1.0
 
 tle = satnogs_calc.loadTLE()
@@ -33,5 +33,5 @@ response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
 lat, long, start, t = satnogs_calc.getLatLongPath(response, duration, resolution)
 x, y, z, h = satnogs_calc.getOrbitPath(response, duration, resolution)
 updatePath(lat, long, start, t)
-# updateOrbit(x, y, z, h)
+updateOrbit(x, y, z, h)
 pyplot.show()
