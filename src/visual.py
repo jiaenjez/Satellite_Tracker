@@ -10,7 +10,7 @@ def updatePath(lat: [float], long: [float], start: (float, float), timestamp) ->
     ax.annotate(f'△ {"CityLine, TX"}', (-96.697442, 32.999553), color='red')
     ax.annotate(f'△ {"London, UK"}', (0.1278, 51.5074), color='red')
     ax.annotate(f'△ {"Beijing, CHN"}', (116.4074, 39.9042), color='red')
-    ax.annotate(f'△ {"Singapore, CHN"}', (103.8198, 1.3521), color='red')
+    ax.annotate(f'△ {"Singapore"}', (103.8198, 1.3521), color='red')
     ax.annotate(f'△ {"Sydney, AUS"}', (-151.2093, -33.8688), color='red')
     ax.annotate(f'△ {"Johannesburg, SA"}', (28.0473, -26.2041), color='red')
     ax.annotate(f'△ {"Antarctica"}', (135, -82.8628), color='red')
