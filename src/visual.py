@@ -2,7 +2,7 @@ from matplotlib import pyplot
 from src import satnogs_calc
 
 
-def updatePath(lat: [], long: [], start: (float, float)):
+def updatePath(lat: [float], long: [float], start: (float, float)) -> None:
     fig, ax = pyplot.subplots(figsize=(20, 10))
     ax.plot(long, lat, 'black')
     ax.annotate("▀█▀", start, color='red')
@@ -10,7 +10,7 @@ def updatePath(lat: [], long: [], start: (float, float)):
     ax.grid()
 
 
-def updateOrbit(x: [], y: [], z: [], h: []):
+def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
     pyplot.figure(2)
     pyplot.axes(projection='3d', xlabel='x (km)', ylabel='y (km)', zlabel='z (km)')
     pyplot.plot(x, y, z, 'red')

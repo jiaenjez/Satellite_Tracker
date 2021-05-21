@@ -15,7 +15,11 @@ from datetime import datetime
 """
 
 
-def loadTLE():
+def loadTLE() -> dict:
+    """
+
+    :return:
+    """
     allSatellite = satnogs_api.getSatellites()
     filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
     sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
@@ -27,8 +31,9 @@ def getTLELineResponse(tleSet: [], target: str) -> []:
 
     :param tleSet: set of TLEs from api
     :param target: name of desired Satellite
-    :return: Two-line Element
+    :return: Two-line Element response
     """
+
     TLEs = tleSet
     name = ""
     line1 = ""
@@ -43,13 +48,14 @@ def getTLELineResponse(tleSet: [], target: str) -> []:
     return [name, line1, line2]
 
 
-def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.0) -> ([], []):
+def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.0) -> ([], [], ()):
     """
 
     :param lines: TLE response
     :param duration: flight duration
     :param resolution: number of calculation per second
-    :return: list of LatLongs
+    :return: list of LatLongs and starting location
+
     """
     satellite = EarthSatellite(lines[1], lines[2], lines[0], load.timescale())
     ts = load.timescale()
@@ -72,6 +78,14 @@ def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 
 
 
 def getOrbitPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.0) -> ([], [], [], []):
+    """
+
+    :param lines:
+    :param duration:
+    :param resolution:
+    :return:
+    """
+
     satellite = EarthSatellite(lines[1], lines[2], lines[0], load.timescale())
     ts = load.timescale()
     t = ts.now()
