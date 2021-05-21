@@ -25,7 +25,7 @@ def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
     pyplot.grid()
 
 
-duration = 10 * 3600
+duration = 4 * 3600
 resolution = 1.0
 
 tle = satnogs_calc.loadTLE()
