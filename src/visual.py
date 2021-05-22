@@ -1,5 +1,7 @@
-from matplotlib import pyplot
+from matplotlib import pyplot, animation
 from src import satnogs_calc
+
+ANIMATION_SPEED = 1  # set this to 3600 for more realistic speed
 
 
 def updatePath(lat: [float], long: [float], start: (float, float), timestamp) -> None:
@@ -19,6 +21,16 @@ def updatePath(lat: [float], long: [float], start: (float, float), timestamp) ->
     ax.set(xlabel='longitude', ylabel='latitude', title='AMICALSAT')
     ax.grid()
 
+    def init():
+        annot = ax.annotate(f'▀█▀', (long[0], lat[0]), color='black')
+        return annot,
+
+    def update(frame):
+        annot = ax.annotate(f'▀█▀', (long[frame], lat[frame]), color='black')
+        return annot,
+
+    return animation.FuncAnimation(fig, update, frames=len(lat), init_func=init, interval=ANIMATION_SPEED, blit=True)
+
 
 def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
     pyplot.figure(2)
@@ -34,12 +46,11 @@ def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
 
 
 duration = 5 * 3600
-resolution = 1.0
+resolution = 0.25
 
 tle = satnogs_calc.loadTLE()
 response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
 lat, long, start, t = satnogs_calc.getLatLongPath(response, duration, resolution)
 x, y, z, h = satnogs_calc.getOrbitPath(response, duration, resolution)
-updatePath(lat, long, start, t)
-updateOrbit(x, y, z, h)
+var = updatePath(lat, long, start, t)  # DO NOT REMOVE THIS ASSIGNMENT, other gets garbage collected
 pyplot.show()
