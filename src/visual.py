@@ -4,7 +4,7 @@ from src import satnogs_calc
 ANIMATION_SPEED = 1  # set this to 3600 for more realistic speed
 
 
-def updatePath(lat: [float], long: [float], start: (float, float), timestamp) -> None:
+def updatePath(lat: [float], long: [float], start: (float, float), timestamp) -> FuncAnimation:
     fig, ax = pyplot.subplots(figsize=(20, 10))
     ax.plot(long, lat, 'black')
     ax.annotate(f'▀█▀ {start[0]:.4f}, {start[1]:.4f} @ {timestamp.utc_strftime()}', start, color='red')
