@@ -45,8 +45,8 @@ def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
     pyplot.grid()
 
 
-duration = 5 * 3600
-resolution = 0.25
+duration = 8 * 3600  # 3600 sec
+resolution = 0.25  # r = 0.25 means 4 updates per minute
 
 tle = satnogs_calc.loadTLE()
 response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
