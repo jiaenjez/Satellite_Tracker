@@ -17,9 +17,9 @@ from datetime import datetime
 
 
 def loadTLE() -> [dict]:
+    # TODO: instead of loading from API, load from file
     """
-
-    :return:
+    :return: list of dict containing TLEs
     """
     timer = time.perf_counter()
     allSatellite = satnogs_api.getSatellites()
@@ -57,7 +57,7 @@ def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 
     :param lines: TLE response
     :param duration: flight duration
     :param resolution: number of calculation per second
-    :return: list of LatLongs and starting location
+    :return: list of LatLongs, starting location, current time, satellite name
 
     """
     timer = time.perf_counter()
@@ -71,7 +71,7 @@ def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 
     y = wgs84.subpoint(satellite.at(t)).latitude.degrees
     x = wgs84.subpoint(satellite.at(t)).longitude.degrees
 
-    for sec in numpy.arange(start - 600, end, resolution * 60.0):
+    for sec in numpy.arange(start, end, resolution * 60.0):
         currTime = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, sec)
         currLoc = satellite.at(currTime)
         currLatLong = wgs84.subpoint(currLoc)
@@ -79,7 +79,7 @@ def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 
         long.append(currLatLong.longitude.degrees)
 
     print(f'getLatLongPath {time.perf_counter() - timer:.3f} second to process')
-    return lat, long, (x, y), t
+    return lat, long, (x, y), t, lines[0]
 
 
 def getOrbitPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.0) -> ([], [], [], []):
