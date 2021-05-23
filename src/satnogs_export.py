@@ -66,26 +66,33 @@ def exportData(ws: openpyxl.Workbook.worksheets, result: [dict]) -> None:
 
 
 def saveTLE(TLE: [dict]) -> None:
+    # TODO: complete this function
     """
-
+    this function should save dict into a raw text file in a format that is easy to read from
+    the saved text file will be later loaded and convert back into the original dict format
     :param TLE: list of raw TLE data from API
     :return:
     """
     f = open(TLE_DIR, 'w')
-    for r in TLE:
-        for v in r.values():
-            f.write(str(v) + "\n")
+    # for line in TLE:
+    #     for v in line.values():
+    #         f.write(str(v) + "\n")
 
     f.close()
 
 
-def loadTLE() -> [dict]:
+def loadTLE(fileDir: str) -> [dict]:
+    # TODO: complete this function
     """
-
-    :param TLE: list of raw TLE data from API
+    this function should load TLE from text file and convert back to original dict formatting
+    :param fileDir: directory for the text file
     :return:
     """
-    pass
+    f = open(fileDir, 'r')
+    for line in f:
+        pass
+
+    return dict()
 
 
 def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
