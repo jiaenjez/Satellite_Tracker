@@ -1,3 +1,5 @@
+# add c
+
 import requests  # json
 
 BING_API_KEY = "AlG8wXq_mQ7kAhYeZzRQPsRPaFxei31_kBCmTW9P_RFOkhFBr1HCl9eT0NTkwEen"  # Insert API key here
