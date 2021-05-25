@@ -11,7 +11,6 @@ TLE_DIR = 'D:\\tle.save'
 
 def newWorkbook() -> openpyxl.Workbook:
     """
-
     :return: A new Excel file object
     """
     return openpyxl.Workbook()
@@ -19,7 +18,6 @@ def newWorkbook() -> openpyxl.Workbook:
 
 def newTab(wb: openpyxl.Workbook, tabName: str, tabIndex: int = 0) -> openpyxl.Workbook.worksheets:
     """
-
     :param wb: Excel file object
     :param tabName: Name of the current Excel tab
     :param tabIndex: Index of the current Excel tab, start from 0
@@ -30,9 +28,7 @@ def newTab(wb: openpyxl.Workbook, tabName: str, tabIndex: int = 0) -> openpyxl.W
 
 def addHeader(ws: openpyxl.Workbook.worksheets) -> None:
     """
-
     Add these fix header into current Excel tab
-
     :param ws: A specific worksheet object within an Excel file object
     :return:
     """
@@ -47,9 +43,7 @@ def addHeader(ws: openpyxl.Workbook.worksheets) -> None:
 
 def exportData(ws: openpyxl.Workbook.worksheets, result: [dict]) -> None:
     """
-
     Export Satellite information on to current Excel worksheet
-
     :param ws: A specific worksheet object within an Excel file object
     :param result: Filtered Satellite data from API
     :return:
@@ -93,8 +87,6 @@ def loadTLE(fileDir: str) -> [dict]:
     :return:
     """
     TLE = []
-    keys = ['tle0', 'tle1', 'tle2', 'tle_source', 'norad_cat_id', 'updated']
-
 
     try:
         f = open(fileDir, 'r')
@@ -111,7 +103,7 @@ def loadTLE(fileDir: str) -> [dict]:
         date_time_obj = datetime.strptime(saved_time, '%Y-%m-%d %H:%M:%S.%f')
         curr_time = datetime.now()
 
-        if (curr_time - date_time_obj).days > 1:
+        if (curr_time - date_time_obj).days >= 1:
             allSatellite = satnogs_api.getSatellites()
             filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
             sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
@@ -119,9 +111,11 @@ def loadTLE(fileDir: str) -> [dict]:
             saveTLE(TLE)
             return TLE
         else:
-            for line in range(1,len(lines),6):
+            repeatPattern = 6
+            for line in range(1, len(lines), repeatPattern):
+                keys = ['tle0', 'tle1', 'tle2', 'tle_source', 'norad_cat_id', 'updated']
                 tle = dict()
-                for k in range(len(keys)):
+                for k in range(repeatPattern):
                     if k == 4:
                         tle[keys[k]] = int(lines[line + k].strip())
                     else:
@@ -133,7 +127,6 @@ def loadTLE(fileDir: str) -> [dict]:
 
 def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
     """
-
     :param wb: Excel file object
     :param dir: Directory to save Excel file
     :return:
@@ -153,7 +146,6 @@ def exportTab(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
 
 def exportTLE(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
     """
-
     :param wb:
     :param tab:
     :param result:
@@ -197,4 +189,3 @@ loaded = loadTLE('TLE_data.txt')
 
 # for i in range(0, len(TLE)):
 #     assert TLE[i] == loaded[i]
-
