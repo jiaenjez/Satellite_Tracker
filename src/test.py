@@ -5,6 +5,7 @@ import requests
 import pytz
 import numpy
 import matplotlib.pyplot as plt
+from src import flightPath
 
 import numpy as np
 from matplotlib.animation import FuncAnimation
@@ -196,12 +197,32 @@ def testPlot():
     pyplot.show()
 
 
+def testFlightPath():
+    f = satnogs_calc.loadTLE()
+    sats = []
+    totalT = 0
+    count = 0
+    for r in f:
+        s = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 5.0 * 3600, 1/2)
+        totalT += s.calcTimer
+        print(count, "/", len(f))
+        count += 1
+        sats.append(s)
+
+    for r in sats:
+        print(r.name, len(r.path[0]))
+
+    print(totalT)
+
+
+
+
 """
 driver
 """
-
+testFlightPath()
 # response = testGetTLE()  # loading from API every time is slow, should load from a file instead
 # # testCurrLocation(response)
 # # testGeneratePath(response)
 # testLatLongPath(response)
-testAnimation()
+# testAnimation()
