@@ -1,5 +1,4 @@
 import time
-
 import numpy
 from skyfield.toposlib import wgs84
 from src import flightPath, satnogs_api, satnogs_selection
