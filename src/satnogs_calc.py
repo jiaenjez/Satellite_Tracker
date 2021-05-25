@@ -1,7 +1,7 @@
 import time
 import numpy
 from skyfield.toposlib import wgs84
-from src import flightPath, satnogs_api, satnogs_selection
+from src import flightPath, satnogs_api, satnogs_selection, satnogs_export
 from skyfield.api import EarthSatellite, load
 from datetime import datetime
 
@@ -113,6 +113,17 @@ def getOrbitPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.
 
     print(f'getOrbitPath {time.perf_counter() - timer:.3f} second to process')
     return x, y, z, h
+
+
+def overlap(path: flightPath.flightPath, observer: wgs84.latlon =wgs84.latlon(33.643831, -117.841132)):
+    d = satnogs_export.loadTLE('D:\\tle.save')
+    sats = dict()
+    for r in d:
+        sats[r['tle0']] = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 3.0 * 3600, 3)
+
+    pass
+
+
 
 
 def getPasses(tleList: [], latLong: (float, float), startDatetime: datetime, endDatetime: datetime) -> [flightPath]:
