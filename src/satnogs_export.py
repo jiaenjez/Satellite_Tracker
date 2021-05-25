@@ -1,6 +1,8 @@
 from src import satnogs_api, satnogs_selection
 import openpyxl  # excel
 from datetime import datetime
+import itertools
+from os import path
 
 TABSNAME = {0: "allSatellite", 1: "filteredSatellite", 2: "sortedSatellite", 3: "TLE"}
 EXCEL_DIR = 'D:\\satnogs_satellites_' + str(datetime.now().date()) + '.xlsx'
@@ -73,11 +75,13 @@ def saveTLE(TLE: [dict]) -> None:
     :param TLE: list of raw TLE data from API
     :return:
     """
+    TLE_DIR = 'TLE_data.txt'
     f = open(TLE_DIR, 'w')
-    # for line in TLE:
-    #     for v in line.values():
-    #         f.write(str(v) + "\n")
-
+    curr_time = datetime.now()
+    f.write(str(curr_time) + "\n")
+    for line in TLE:
+        for v in line.values():
+            f.write(str(v) + "\n")
     f.close()
 
 
@@ -88,11 +92,43 @@ def loadTLE(fileDir: str) -> [dict]:
     :param fileDir: directory for the text file
     :return:
     """
-    f = open(fileDir, 'r')
-    for line in f:
-        pass
+    TLE = []
+    keys = ['tle0', 'tle1', 'tle2', 'tle_source', 'norad_cat_id', 'updated']
 
-    return dict()
+
+    try:
+        f = open(fileDir, 'r')
+    except FileNotFoundError:
+        allSatellite = satnogs_api.getSatellites()
+        filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
+        sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
+        TLE = satnogs_selection.tleFilter(sortedSatellite)
+        saveTLE(TLE)
+        return TLE
+    else:
+        lines = f.readlines()
+        saved_time = lines[0].strip()
+        date_time_obj = datetime.strptime(saved_time, '%Y-%m-%d %H:%M:%S.%f')
+        curr_time = datetime.now()
+
+        if (curr_time - date_time_obj).days > 1:
+            allSatellite = satnogs_api.getSatellites()
+            filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
+            sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
+            TLE = satnogs_selection.tleFilter(sortedSatellite)
+            saveTLE(TLE)
+            return TLE
+        else:
+            for line in range(1,len(lines),6):
+                tle = dict()
+                for k in range(len(keys)):
+                    if k == 4:
+                        tle[keys[k]] = int(lines[line + k].strip())
+                    else:
+                        tle[keys[k]] = lines[line+k].strip()
+                TLE.append(tle)
+
+    return TLE
 
 
 def saveFile(wb: openpyxl.Workbook, dir: str) -> None:
@@ -149,10 +185,16 @@ sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
 TLE = satnogs_selection.tleFilter(sortedSatellite)
 
 wb = newWorkbook()
-exportTab(wb, 0, allSatellite)
-exportTab(wb, 1, filteredSatellite)
-exportTab(wb, 2, sortedSatellite)
-exportTLE(wb, 3, TLE)
+# exportTab(wb, 0, allSatellite)
+# exportTab(wb, 1, filteredSatellite)
+# exportTab(wb, 2, sortedSatellite)
+# exportTLE(wb, 3, TLE)
 
-saveFile(wb, EXCEL_DIR)
-saveTLE(TLE)
+
+# saveTLE(TLE)
+
+loaded = loadTLE('TLE_data.txt')
+
+# for i in range(0, len(TLE)):
+#     assert TLE[i] == loaded[i]
+
