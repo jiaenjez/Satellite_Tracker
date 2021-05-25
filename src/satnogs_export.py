@@ -91,10 +91,10 @@ def loadTLE(fileDir: str) -> [dict]:
     try:
         f = open(fileDir, 'r')
     except FileNotFoundError:
-        raw = satnogs_selection.tleFilter(
+        rawData = satnogs_selection.tleFilter(
             satnogs_selection.sortMostRecent(satnogs_selection.satelliteFilter(satnogs_api.getSatellites())))
-        saveTLE(raw)
-        return raw
+        saveTLE(rawData)
+        return rawData
     else:
         lines = f.readlines()
         saved_time = lines[0].strip()
@@ -102,10 +102,10 @@ def loadTLE(fileDir: str) -> [dict]:
         curr_time = datetime.now()
 
         if (curr_time - date_time_obj).days >= 1:
-            raw = satnogs_selection.tleFilter(
+            rawData = satnogs_selection.tleFilter(
                 satnogs_selection.sortMostRecent(satnogs_selection.satelliteFilter(satnogs_api.getSatellites())))
-            saveTLE(raw)
-            return raw
+            saveTLE(rawData)
+            return rawData
         else:
             repeatPattern = 6
             for line in range(1, len(lines), repeatPattern):
