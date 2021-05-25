@@ -1,8 +1,7 @@
 from matplotlib import pyplot, animation
 from matplotlib.animation import FuncAnimation
 from skyfield.api import load
-
-from src import satnogs_calc
+from src import satnogs_calc, flightPath, satnogs_export
 import time
 
 
@@ -63,9 +62,71 @@ def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
     pyplot.grid()
 
 
-tle = satnogs_calc.loadTLE()
-response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
-lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
+def getAllPath():
+    # f = satnogs_calc.loadTLE()  # using old fn that always read from api
+    f = satnogs_export.loadTLE('D:\\tle.save')
+    sats = []
+    totalT = 0
+    count = 0
+    for r in f:
+        s = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 3.0 * 3600, 3)
+        totalT += s.calcTimer
+        print(count, "/", len(f))
+        count += 1
+        sats.append(s)
+
+    print(totalT)
+    return sats
+
+
+def updateAllPath(allPath: []) -> FuncAnimation:
+    fig, ax = pyplot.subplots(figsize=(30, 10))
+
+    def setup():
+        ax.set_xlim([-270, 270])
+        ax.set_ylim([-120, 120])
+        ax.annotate(f'△ {"UC Irvine"}', (-117.841132, 33.643831), color='red')
+        ax.annotate(f'△ {"Plano, TX"}', (-96.697442, 32.999553), color='red')
+        ax.annotate(f'△ {"Anchorage, AK"}', (-149.9003, 61.2181), color='red')
+        ax.annotate(f'△ {"NYC, NY"}', (-74.0060, 40.7128), color='red')
+        ax.annotate(f'△ {"London, UK"}', (0.1278, 51.5074), color='red')
+        ax.annotate(f'△ {"Dalian, China"}', (121.6147, 38.9140), color='red')
+        ax.annotate(f'△ {"New Delhi, India"}', (77.2090, 28.6139), color='red')
+        ax.annotate(f'△ {"Singapore"}', (103.8198, 1.3521), color='red')
+        ax.annotate(f'△ {"Sydney, Australia"}', (-151.2093, -33.8688), color='red')
+        ax.annotate(f'△ {"Johannesburg, South Africa"}', (28.0473, -26.2041), color='red')
+        ax.annotate(f'△ {"Abu Dhabi, UAE"}', (54.3773, 24.4539), color='red')
+        ax.annotate(f'△ {"Antarctica"}', (135, -82.8628), color='red')
+        ax.annotate(f'△ {"Antarctica"}', (-135, -82.8628), color='red')
+        ax.set(xlabel='longitude', ylabel='latitude', title='AMICALSAT')
+        ax.grid()
+
+    def init():
+        setup()
+        ax.set(xlabel='longitude', ylabel='latitude', title=allPath[0].name)
+        long = allPath[0].path[1]
+        lat = allPath[0].path[0]
+        currPath = ax.plot(long, lat, 'black')
+        return currPath,
+
+    def update(frame):
+        ax.cla()
+        setup()
+        ax.set(xlabel='longitude', ylabel='latitude', title=allPath[frame + 1].name)
+        long = allPath[frame + 1].path[1]
+        lat = allPath[frame + 1].path[0]
+        currPath = ax.plot(long, lat, 'black')
+        return currPath,
+
+    return animation.FuncAnimation(fig, update, frames=len(allPath)-1, init_func=init, interval=1000)
+
+
+# tle = satnogs_calc.loadTLE()
+# response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
+# lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
 # x, y, z, h = satnogs_calc.getOrbitPath(response, DURATION, RESOLUTION)
-var = updatePath(lat, long, start, t)  # DO NOT REMOVE THIS ASSIGNMENT, other gets garbage collected
+# var = updatePath(lat, long, start, t)  # DO NOT REMOVE THIS ASSIGNMENT, other gets garbage collected
+# pyplot.show()
+
+f = updateAllPath(getAllPath())
 pyplot.show()
