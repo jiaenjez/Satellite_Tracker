@@ -78,7 +78,6 @@ def saveTLE(TLE: [dict]) -> None:
     TLE_DIR = 'TLE_data.txt'
     f = open(TLE_DIR, 'w')
     curr_time = datetime.now()
-    # print(curr_time)
     f.write(str(curr_time) + "\n")
     for line in TLE:
         for v in line.values():
@@ -96,7 +95,10 @@ def loadTLE(fileDir: str) -> [dict]:
     TLE = []
     keys = ['tle0', 'tle1', 'tle2', 'tle_source', 'norad_cat_id', 'updated']
 
-    if not path.exists(fileDir):
+
+    try:
+        f = open(fileDir, 'r')
+    except FileNotFoundError:
         allSatellite = satnogs_api.getSatellites()
         filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
         sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
@@ -104,7 +106,6 @@ def loadTLE(fileDir: str) -> [dict]:
         saveTLE(TLE)
         return TLE
     else:
-        f = open(fileDir, 'r')
         lines = f.readlines()
         saved_time = lines[0].strip()
         date_time_obj = datetime.strptime(saved_time, '%Y-%m-%d %H:%M:%S.%f')
@@ -190,10 +191,10 @@ wb = newWorkbook()
 # exportTLE(wb, 3, TLE)
 
 
-saveTLE(TLE)
+# saveTLE(TLE)
 
 loaded = loadTLE('TLE_data.txt')
 
-for i in range(0, len(TLE)):
-    assert TLE[i] == loaded[i]
+# for i in range(0, len(TLE)):
+#     assert TLE[i] == loaded[i]
 
