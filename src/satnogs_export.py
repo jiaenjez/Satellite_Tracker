@@ -102,12 +102,10 @@ def loadTLE(fileDir: str) -> [dict]:
         curr_time = datetime.now()
 
         if (curr_time - date_time_obj).days >= 1:
-            allSatellite = satnogs_api.getSatellites()
-            filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
-            sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
-            TLE = satnogs_selection.tleFilter(sortedSatellite)
-            saveTLE(TLE)
-            return TLE
+            raw = satnogs_selection.tleFilter(
+                satnogs_selection.sortMostRecent(satnogs_selection.satelliteFilter(satnogs_api.getSatellites())))
+            saveTLE(raw)
+            return raw
         else:
             repeatPattern = 6
             for line in range(1, len(lines), repeatPattern):
