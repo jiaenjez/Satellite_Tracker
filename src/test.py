@@ -215,12 +215,36 @@ def testFlightPath():
     print(totalT)
 
 
+def testHorizon():
+    irvine = wgs84.latlon(33.643831, -117.841132)
+    now = load.timescale().now()
+    t = now.utc.year
+    # endTime = load.timescale(startTime.)
+    #
+    # print(startTime, endTime)
+
+
+def testTimeArray():
+    # TODO replace all separate time object to time array
+    now = load.timescale().now().utc
+    ts = load.timescale()
+    pacificTimeZone = pytz.timezone("US/Pacific")
+
+    i, j, r = 0, 59, 1/60.0
+    for sec in numpy.arange(i, j, r):  # this creates (j-i)/60 number of load.timesacle() object!!!
+        curr = ts.utc(now.year, now.month, now.day, now.hour, now.minute, sec)
+        print(curr.astimezone(pacificTimeZone))
+
+    interval = ts.utc(now.year, now.month, now.day, now.hour, now.minute, numpy.arange(i, j, r))
+    for t in interval.astimezone(pacificTimeZone):
+        print(t)
 
 
 """
 driver
 """
-testFlightPath()
+testTimeArray()
+# testFlightPath()
 # response = testGetTLE()  # loading from API every time is slow, should load from a file instead
 # # testCurrLocation(response)
 # # testGeneratePath(response)
