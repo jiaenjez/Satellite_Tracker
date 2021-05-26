@@ -215,13 +215,29 @@ def testFlightPath():
     print(totalT)
 
 
+def testAmical():
+    tle0 = "AMICALSAT"
+    tle1 = "1 46287U 20061R   21139.75662101  .00001100  00000-0  70723-4 0  9995"
+    tle2 = "2 46287  97.4883 213.6509 0002908 160.6123 199.5218 15.10428336 39013"
+    return EarthSatellite(tle1, tle2, tle0, load.timescale())
+
+
 def testHorizon():
+    # TODO visit https://www.n2yo.com/passes/?s=46287&a=1 and compare result
     irvine = wgs84.latlon(33.643831, -117.841132)
-    now = load.timescale().now()
-    t = now.utc.year
-    # endTime = load.timescale(startTime.)
-    #
-    # print(startTime, endTime)
+    now = load.timescale().now().utc
+    ts = load.timescale()
+    start = ts.now()
+    end = ts.utc(now.year, now.month, now.day, now.hour, now.minute, now.second + 3 * 24 * 3600)
+    satellite = testAmical()
+    condition = {"marginal": 25.0, "good": 50.0, "excellent": 75.0}
+    degree = condition["excellent"]
+    t, events = satellite.find_events(irvine, start, end, altitude_degrees=degree)
+    pacificTimeZone = pytz.timezone("US/Pacific")
+    for ti, event in zip(t, events):
+        name = (f'rise above {degree}°', 'culminate', 'set below {degree}°')[event]
+        print(ti.astimezone(pacificTimeZone), name)
+
 
 
 def testTimeArray():
@@ -243,7 +259,8 @@ def testTimeArray():
 """
 driver
 """
-testTimeArray()
+# testTimeArray()
+testHorizon()
 # testFlightPath()
 # response = testGetTLE()  # loading from API every time is slow, should load from a file instead
 # # testCurrLocation(response)
