@@ -115,7 +115,7 @@ def getOrbitPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.
     return x, y, z, h
 
 
-def overlap(path: flightPath.flightPath, observer: wgs84.latlon =wgs84.latlon(33.643831, -117.841132)):
+def overlap(path: flightPath.flightPath, observer: wgs84.latlon = wgs84.latlon(33.643831, -117.841132)):
     d = satnogs_export.loadTLE('D:\\tle.save')
     sats = dict()
     for r in d:
