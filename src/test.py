@@ -1,3 +1,4 @@
+import time
 from matplotlib import pyplot
 from src import satnogs_api, satnogs_selection, satnogs_calc, location_input
 from skyfield.api import EarthSatellite, load, wgs84
@@ -217,13 +218,14 @@ def testFlightPath():
 
 def testAmical():
     tle0 = "AMICALSAT"
-    tle1 = "1 46287U 20061R   21139.75662101  .00001100  00000-0  70723-4 0  9995"
-    tle2 = "2 46287  97.4883 213.6509 0002908 160.6123 199.5218 15.10428336 39013"
+    tle1 = "1 46287U 20061R   21146.44766273  .00000677  00000-0  44968-4 0  9994"
+    tle2 = "2 46287  97.4881 220.1957 0003468 144.5473 215.5988 15.10442191 40023"
     return EarthSatellite(tle1, tle2, tle0, load.timescale())
 
 
 def testHorizon():
     # TODO visit https://www.n2yo.com/passes/?s=46287&a=1 and compare result
+    fuctimer = time.perf_counter()
     irvine = wgs84.latlon(33.643831, -117.841132)
     now = load.timescale().now().utc
     ts = load.timescale()
@@ -233,11 +235,15 @@ def testHorizon():
     condition = {"marginal": 25.0, "good": 50.0, "excellent": 75.0}
     degree = condition["excellent"]
     t, events = satellite.find_events(irvine, start, end, altitude_degrees=degree)
-    pacificTimeZone = pytz.timezone("US/Pacific")
+    pacificTimeZone = pytz.timezone("US/Central")
     for ti, event in zip(t, events):
-        name = (f'rise above {degree}°', 'culminate', 'set below {degree}°')[event]
+        name = (f'rise above {degree}°', 'culminate', f'set below {degree}°')[event]
         print(ti.astimezone(pacificTimeZone), name)
 
+    print("finding horizon for duration of 3 days took: ", time.perf_counter() - fuctimer)
+
+    interval = None  # should be list of time array from [(rise, set)] where rise and set are load.timescale() object
+    return interval
 
 
 def testTimeArray():
@@ -259,6 +265,8 @@ def testTimeArray():
 """
 driver
 """
+
+
 # testTimeArray()
 testHorizon()
 # testFlightPath()
