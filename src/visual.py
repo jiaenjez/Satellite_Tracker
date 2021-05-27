@@ -64,7 +64,9 @@ def updateOrbit(x: [float], y: [float], z: [float], h: [float]) -> None:
 
 def getAllPath():
     # f = satnogs_calc.loadTLE()  # using old fn that always read from api
-    f = satnogs_export.loadTLE('D:\\tle.save')
+    functimer = time.perf_counter()
+    f = satnogs_export.loadTLE(satnogs_export.TLE_DIR)
+    functimer = time.perf_counter() - functimer
     sats = []
     totalT = 0
     count = 0
@@ -75,12 +77,12 @@ def getAllPath():
         count += 1
         sats.append(s)
 
-    print(totalT)
+    print(totalT, " + ", functimer)
     return sats
 
 
 def updateAllPath(allPath: []) -> FuncAnimation:
-    fig, ax = pyplot.subplots(figsize=(30, 10))
+    fig, ax = pyplot.subplots(figsize=(30, 20))
 
     def setup():
         ax.set_xlim([-270, 270])
@@ -129,4 +131,5 @@ def updateAllPath(allPath: []) -> FuncAnimation:
 # pyplot.show()
 
 f = updateAllPath(getAllPath())
+f.save('D:\\path.gif', dpi=100, writer='Pillow')
 pyplot.show()
