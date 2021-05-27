@@ -61,15 +61,15 @@ def exportData(ws: openpyxl.Workbook.worksheets, result: [dict]) -> None:
         ws.cell(r, 7, entry["time"])
 
 
-def saveTLE(TLE: [dict]) -> None:
+def saveTLE(TLE: [dict]) -> [dict]:
     # TODO: complete this function
     """
     this function should save dict into a raw text file in a format that is easy to read from
     the saved text file will be later loaded and convert back into the original dict format
     :param TLE: list of raw TLE data from API
-    :return:
+    :return: return param
     """
-    TLE_DIR = 'TLE_data.txt'
+
     f = open(TLE_DIR, 'w')
     curr_time = datetime.now()
     f.write(str(curr_time) + "\n")
@@ -78,8 +78,10 @@ def saveTLE(TLE: [dict]) -> None:
             f.write(str(v) + "\n")
     f.close()
 
+    return TLE
 
-def loadTLE(fileDir: str) -> [dict]:
+
+def loadTLE(fileDir: str = TLE_DIR) -> [dict]:
     # TODO: complete this function
     """
     this function should load TLE from text file and convert back to original dict formatting
@@ -91,10 +93,10 @@ def loadTLE(fileDir: str) -> [dict]:
     try:
         f = open(fileDir, 'r')
     except FileNotFoundError:
+        print("fileNotFound")
         rawData = satnogs_selection.tleFilter(
             satnogs_selection.sortMostRecent(satnogs_selection.satelliteFilter(satnogs_api.getSatellites())))
-        saveTLE(rawData)
-        return rawData
+        return saveTLE(rawData)
     else:
         lines = f.readlines()
         saved_time = lines[0].strip()
@@ -102,11 +104,12 @@ def loadTLE(fileDir: str) -> [dict]:
         curr_time = datetime.now()
 
         if (curr_time - date_time_obj).days >= 1:
+            print("fileOutDated")
             rawData = satnogs_selection.tleFilter(
                 satnogs_selection.sortMostRecent(satnogs_selection.satelliteFilter(satnogs_api.getSatellites())))
-            saveTLE(rawData)
-            return rawData
+            return saveTLE(rawData)
         else:
+            print("readingExistingFile")
             repeatPattern = 6
             for line in range(1, len(lines), repeatPattern):
                 keys = ['tle0', 'tle1', 'tle2', 'tle_source', 'norad_cat_id', 'updated']
