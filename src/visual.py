@@ -73,7 +73,7 @@ def getAllPath():
     for r in f:
         s = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 3.0 * 3600, 3)
         totalT += s.calcTimer
-        print(count, "/", len(f))
+        print(count + 1, "/", len(f))
         count += 1
         sats.append(s)
 
