@@ -167,21 +167,24 @@ def exportTLE(wb: openpyxl.Workbook, tab: int, result: [dict]) -> None:
 
 
 # driver
-allSatellite = satnogs_api.getSatellites()
-filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
-sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
-TLE = satnogs_selection.tleFilter(sortedSatellite)
 
-wb = newWorkbook()
+# allSatellite = satnogs_api.getSatellites()
+# filteredSatellite = satnogs_selection.satelliteFilter(allSatellite)
+# sortedSatellite = satnogs_selection.sortMostRecent(filteredSatellite)
+# TLE = satnogs_selection.tleFilter(sortedSatellite)
+#
+# wb = newWorkbook()
 # exportTab(wb, 0, allSatellite)
 # exportTab(wb, 1, filteredSatellite)
 # exportTab(wb, 2, sortedSatellite)
 # exportTLE(wb, 3, TLE)
+# saveFile(wb, EXCEL_DIR)
+# wb.close()
 
 
-# saveTLE(TLE)
-
-loaded = loadTLE('TLE_data.txt')
-
-# for i in range(0, len(TLE)):
-#     assert TLE[i] == loaded[i]
+# # saveTLE(TLE)
+#
+# loaded = loadTLE('TLE_data.txt')
+#
+# # for i in range(0, len(TLE)):
+# #     assert TLE[i] == loaded[i]
