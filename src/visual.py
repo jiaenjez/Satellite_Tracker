@@ -82,7 +82,7 @@ def getAllPath():
 
 
 def updateAllPath(allPath: []) -> FuncAnimation:
-    fig, ax = pyplot.subplots(figsize=(30, 20))
+    fig, ax = pyplot.subplots(figsize=(30, 10))
 
     def setup():
         ax.set_xlim([-270, 270])
@@ -131,5 +131,5 @@ def updateAllPath(allPath: []) -> FuncAnimation:
 # pyplot.show()
 
 f = updateAllPath(getAllPath())
-f.save('D:\\path.gif', dpi=100, writer='Pillow')
+f.save('D:\\path.gif', dpi=100)
 pyplot.show()
