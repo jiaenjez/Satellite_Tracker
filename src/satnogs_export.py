@@ -6,7 +6,7 @@ from os import path
 
 TABSNAME = {0: "allSatellite", 1: "filteredSatellite", 2: "sortedSatellite", 3: "TLE"}
 EXCEL_DIR = 'D:\\satnogs_satellites_' + str(datetime.now().date()) + '.xlsx'
-TLE_DIR = 'D:\\tle.save'
+TLE_DIR = 'TLE_data.txt'
 
 
 def newWorkbook() -> openpyxl.Workbook:

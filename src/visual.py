@@ -123,13 +123,15 @@ def updateAllPath(allPath: []) -> FuncAnimation:
     return animation.FuncAnimation(fig, update, frames=len(allPath)-1, init_func=init, interval=1000)
 
 
-# tle = satnogs_calc.loadTLE()
-# response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
-# lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
-# x, y, z, h = satnogs_calc.getOrbitPath(response, DURATION, RESOLUTION)
-# var = updatePath(lat, long, start, t)  # DO NOT REMOVE THIS ASSIGNMENT, other gets garbage collected
-# pyplot.show()
+tle = satnogs_export.loadTLE()
+response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
+lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
+x, y, z, h = satnogs_calc.getOrbitPath(response, DURATION, RESOLUTION)
+updateOrbit(x, y, z, h)
 
-f = updateAllPath(getAllPath())
-f.save('D:\\path.gif', dpi=100)
+# var = updatePath(lat, long, start, t)  # DO NOT REMOVE THIS ASSIGNMENT, other gets garbage collected
 pyplot.show()
+
+# f = updateAllPath(getAllPath())
+# # f.save('D:\\path.gif', dpi=100)
+# # pyplot.show()
