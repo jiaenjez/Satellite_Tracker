@@ -257,6 +257,8 @@ def testTimeArray():
         curr = ts.utc(now.year, now.month, now.day, now.hour, now.minute, sec)
         print(curr.astimezone(pacificTimeZone))
 
+    #  was interval = yr=2021, month=5, day=29, hour=13, min=37, sec=00
+    #  now interval = yr=2021, month=5, day=29, hour=13, min=37, sec=range(0,3600)
     interval = ts.utc(now.year, now.month, now.day, now.hour, now.minute, numpy.arange(i, j, r))
     for t in interval.astimezone(pacificTimeZone):
         print(t)
