@@ -253,7 +253,7 @@ def testTimeArray():
     pacificTimeZone = pytz.timezone("US/Pacific")
 
     i, j, r = 0, 59, 1/60.0
-    for sec in numpy.arange(i, j, r):  # this creates (j-i)/60 number of load.timesacle() object!!!
+    for sec in numpy.arange(i, j, r):  # this creates (j-i)/60 number of load.timescale() object!!!
         curr = ts.utc(now.year, now.month, now.day, now.hour, now.minute, sec)
         print(curr.astimezone(pacificTimeZone))
 
