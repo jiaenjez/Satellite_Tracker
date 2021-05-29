@@ -252,25 +252,29 @@ def testTimeArray():
     ts = load.timescale()
     pacificTimeZone = pytz.timezone("US/Pacific")
 
-    i, j, r = 0, 59, 1/60.0
+    i, j, r = 0, 59, 1/4.0
     for sec in numpy.arange(i, j, r):  # this creates (j-i)/60 number of load.timescale() object!!!
         curr = ts.utc(now.year, now.month, now.day, now.hour, now.minute, sec)
-        print(curr.astimezone(pacificTimeZone))
+        # print(curr.astimezone(pacificTimeZone))
+        print(float(sec))
 
     #  was interval = yr=2021, month=5, day=29, hour=13, min=37, sec=00
     #  now interval = yr=2021, month=5, day=29, hour=13, min=37, sec=range(0,3600)
     interval = ts.utc(now.year, now.month, now.day, now.hour, now.minute, numpy.arange(i, j, r))
-    for t in interval.astimezone(pacificTimeZone):
-        print(t)
+    # for t in interval.astimezone(pacificTimeZone):
+    #     print(t)
 
+    # print(interval.utc.second)
+    # for i in range(len(interval.utc.second)):
+    #     print(float(interval.utc.second[i]))
 
 """
 driver
 """
 
 
-# testTimeArray()
-testHorizon()
+testTimeArray()
+# testHorizon()
 # testFlightPath()
 # response = testGetTLE()  # loading from API every time is slow, should load from a file instead
 # # testCurrLocation(response)

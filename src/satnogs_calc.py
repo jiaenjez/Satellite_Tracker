@@ -70,15 +70,21 @@ def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 
     y = wgs84.subpoint(satellite.at(t)).latitude.degrees
     x = wgs84.subpoint(satellite.at(t)).longitude.degrees
 
-    for sec in numpy.arange(start, end, resolution * 60.0):
-        currTime = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, sec)
-        currLoc = satellite.at(currTime)
-        currLatLong = wgs84.subpoint(currLoc)
-        lat.append(currLatLong.latitude.degrees)
-        long.append(currLatLong.longitude.degrees)
+
+    interval = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, numpy.arange(start, end, resolution*60))
+    location = satellite.at(interval)
+    LatLong = wgs84.subpoint(location)
+
+
+    # for sec in numpy.arange(start, end, resolution * 60.0):
+    #     currTime = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, sec)
+    #     currLoc = satellite.at(currTime)
+    #     currLatLong = wgs84.subpoint(currLoc)
+    #     lat.append(currLatLong.latitude.degrees)
+    #     long.append(currLatLong.longitude.degrees)
 
     print(f'getLatLongPath {time.perf_counter() - timer:.3f} second to process')
-    return lat, long, (x, y), t, lines[0]
+    return LatLong.latitude.degrees, LatLong.longitude.degrees, (x, y), t, lines[0]
 
 
 def getOrbitPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.0) -> ([], [], [], []):
@@ -101,18 +107,30 @@ def getOrbitPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 4.
     z = []
     h = []
 
-    for sec in numpy.arange(start, end, resolution * 60.0):
-        currTime = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, sec)
-        currLoc = satellite.at(currTime)
-        x.append(currLoc.position.km[0])
-        y.append(currLoc.position.km[1])
-        z.append(currLoc.position.km[2])
-        point = numpy.array((currLoc.position.km[0], currLoc.position.km[1], currLoc.position.km[2]))
-        center = numpy.array((0, 0, 0))
-        h.append(numpy.linalg.norm(point - center))
+    interval = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, numpy.arange(start, end, resolution * 60))
+    location = satellite.at(interval)
+    x.extend(location.position.km[0])
+    y.extend(location.position.km[1])
+    z.extend(location.position.km[2])
+
+    center = numpy.array(([0.0] * 60, [0.0] * 60, [0.0] * 60))
+    point= numpy.array((x, y, z))
+    print(point, center)
+    h.extend(numpy.linalg.norm(point - center))
+    print(h)
+
+    # for sec in numpy.arange(start, end, resolution * 60.0):
+    #     currTime = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, sec)
+    #     currLoc = satellite.at(currTime)
+    #     x.append(currLoc.position.km[0])
+    #     y.append(currLoc.position.km[1])
+    #     z.append(currLoc.position.km[2])
+    #     point = numpy.array((currLoc.position.km[0], currLoc.position.km[1], currLoc.position.km[2]))
+    #     center = numpy.array((0, 0, 0))
+    #     h.append(numpy.linalg.norm(point - center))
 
     print(f'getOrbitPath {time.perf_counter() - timer:.3f} second to process')
-    return x, y, z, h
+    return location.position.km[0], location.position.km[1], location.position.km[2], h
 
 
 def overlap(path: flightPath.flightPath, observer: wgs84.latlon = wgs84.latlon(33.643831, -117.841132)):
@@ -153,3 +171,7 @@ def filterPasses(passList: [], elevation: float, horizonDegree: float, minDurati
 
     """
     pass
+
+lines = ["AMICALSAT", "1 46287U 20061R   21146.44766273  .00000677  00000-0  44968-4 0  9994", "2 46287  97.4881 220.1957 0003468 144.5473 215.5988 15.10442191 40023"]
+
+getOrbitPath(lines)
