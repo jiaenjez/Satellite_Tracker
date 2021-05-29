@@ -226,14 +226,14 @@ def testAmical():
 def testHorizon():
     # TODO visit https://www.n2yo.com/passes/?s=46287&a=1 and compare result
     fuctimer = time.perf_counter()
-    irvine = wgs84.latlon(33.643831, -117.841132)
+    irvine = wgs84.latlon(33.643831, -117.841132)  # receiver location object
     now = load.timescale().now().utc
     ts = load.timescale()
     start = ts.now()
-    end = ts.utc(now.year, now.month, now.day, now.hour, now.minute, now.second + 3 * 24 * 3600)
-    satellite = testAmical()
+    end = ts.utc(now.year, now.month, now.day, now.hour, now.minute, now.second + 1 * 24 * 3600)
+    satellite = testAmical()  # satellite object
     condition = {"marginal": 25.0, "good": 50.0, "excellent": 75.0}
-    degree = condition["excellent"]
+    degree = condition["good"]  # peak is at 90
     t, events = satellite.find_events(irvine, start, end, altitude_degrees=degree)
     pacificTimeZone = pytz.timezone("US/Central")
     for ti, event in zip(t, events):
