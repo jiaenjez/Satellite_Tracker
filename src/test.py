@@ -243,13 +243,10 @@ def testHorizon():
     interval = []
     for i in range(0, len(events), 3):
         datetime_rise = Time.utc_datetime(t[i])
+        datetime_set = Time.utc_datetime(t[i+2])
         t0 = ts.utc(datetime_rise.year, datetime_rise.month, datetime_rise.day, datetime_rise.hour, datetime_rise.minute, datetime_rise.second)
 
-        datetime_set = Time.utc_datetime(t[i+2])
-        t1 = ts.utc(datetime_set.year, datetime_set.month, datetime_set.day, datetime_set.hour, datetime_set.minute, datetime_set.second)
-
-        diff = (datetime_set - datetime_rise).total_seconds()
-        diff = numpy.float64(diff)
+        diff = numpy.float64((datetime_set - datetime_rise).total_seconds())
         t0_sec = t0.utc.second
         t1_sec = t0_sec + diff
         interval.append(ts.utc(t0.utc.year, t0.utc.month, t0.utc.day, t0.utc.hour, t0.utc.minute, numpy.arange(t0_sec, t1_sec, 1)))
