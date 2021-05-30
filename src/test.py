@@ -1,7 +1,7 @@
 import time
 from matplotlib import pyplot
 from src import satnogs_api, satnogs_selection, satnogs_calc, location_input
-from skyfield.api import EarthSatellite, load, wgs84
+from skyfield.api import EarthSatellite, load, wgs84, Time
 import requests
 import pytz
 import numpy
@@ -230,19 +230,37 @@ def testHorizon():
     now = load.timescale().now().utc
     ts = load.timescale()
     start = ts.now()
-    end = ts.utc(now.year, now.month, now.day, now.hour, now.minute, now.second + 1 * 24 * 3600)
+    end = ts.utc(now.year, now.month, now.day, now.hour, now.minute, now.second + 5 * 24 * 3600)
     satellite = testAmical()  # satellite object
     condition = {"marginal": 25.0, "good": 50.0, "excellent": 75.0}
     degree = condition["good"]  # peak is at 90
     t, events = satellite.find_events(irvine, start, end, altitude_degrees=degree)
     pacificTimeZone = pytz.timezone("US/Central")
-    for ti, event in zip(t, events):
-        name = (f'rise above {degree}°', 'culminate', f'set below {degree}°')[event]
-        print(ti.astimezone(pacificTimeZone), name)
+
+    t0, t1, datetime = None, None, None
+    interval = []
+    for i in range(0,len(events), 3):
+        datetime_rise = Time.utc_datetime(t[i])
+        t0 = ts.utc(datetime_rise.year, datetime_rise.month, datetime_rise.day, datetime_rise.hour, datetime_rise.minute, datetime_rise.second)
+        datetime_set = Time.utc_datetime(t[i+2])
+        t1 = ts.utc(datetime_set.year, datetime_set.month, datetime_set.day, datetime_set.hour, datetime_set.minute, datetime_set.second)
+        interval.append(ts.utc(t0.utc.year, t0.utc.month, t0.utc.day, t0.utc.hour, t0.utc.minute, numpy.arange(t0.utc.second, t1.utc.second, 1)))
+
+    # for ti, event in zip(t, events):
+    #
+    #     datetime = Time.utc_datetime(ti)
+    #     name = (f'rise above {degree}°', 'culminate', f'set below {degree}°')[event]
+    #     # print(ti.astimezone(pacificTimeZone), name)
+    #
+    #     if event == 0:
+    #         t0 = ts.utc(datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute, datetime.second)
+    #
+    #     if event == 2:
+    #         t1 = ts.utc(datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute, datetime.second)
 
     print("finding horizon for duration of 3 days took: ", time.perf_counter() - fuctimer)
+    # interval = ts.utc(t0.utc.year, t0.utc.month, t0.utc.day, t0.utc.hour, t0.utc.minute, numpy.arange(t0.utc.second, t1.utc.second, 1))
 
-    interval = None  # should be list of time array from [(rise, set)] where rise and set are load.timescale() object
     return interval
 
 
@@ -273,8 +291,8 @@ driver
 """
 
 
-testTimeArray()
-# testHorizon()
+# testTimeArray()
+testHorizon()
 # testFlightPath()
 # response = testGetTLE()  # loading from API every time is slow, should load from a file instead
 # # testCurrLocation(response)
