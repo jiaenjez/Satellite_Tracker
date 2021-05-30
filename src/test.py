@@ -233,18 +233,29 @@ def testHorizon():
     end = ts.utc(now.year, now.month, now.day, now.hour, now.minute, now.second + 5 * 24 * 3600)
     satellite = testAmical()  # satellite object
     condition = {"marginal": 25.0, "good": 50.0, "excellent": 75.0}
-    degree = condition["good"]  # peak is at 90
+    degree = condition["marginal"]  # peak is at 90
     t, events = satellite.find_events(irvine, start, end, altitude_degrees=degree)
     pacificTimeZone = pytz.timezone("US/Central")
 
+    for ti, event in zip(t, events):
+        name = ('rise above 30°', 'culminate', 'set below 30°')[event]
+        print(ti.utc_strftime('%Y %b %d %H:%M:%S'), name)
+
     t0, t1, datetime = None, None, None
     interval = []
+
     for i in range(0,len(events), 3):
         datetime_rise = Time.utc_datetime(t[i])
         t0 = ts.utc(datetime_rise.year, datetime_rise.month, datetime_rise.day, datetime_rise.hour, datetime_rise.minute, datetime_rise.second)
+
         datetime_set = Time.utc_datetime(t[i+2])
         t1 = ts.utc(datetime_set.year, datetime_set.month, datetime_set.day, datetime_set.hour, datetime_set.minute, datetime_set.second)
-        interval.append(ts.utc(t0.utc.year, t0.utc.month, t0.utc.day, t0.utc.hour, t0.utc.minute, numpy.arange(t0.utc.second, t1.utc.second, 1)))
+
+        diff = (datetime_set - datetime_rise).total_seconds()
+        diff = numpy.float64(diff)
+        t0_sec = t0.utc.second
+        t1_sec = t0_sec + diff
+        interval.append(ts.utc(t0.utc.year, t0.utc.month, t0.utc.day, t0.utc.hour, t0.utc.minute, numpy.arange(t0_sec, t1_sec, 1)))
 
     # for ti, event in zip(t, events):
     #
@@ -292,7 +303,9 @@ driver
 
 
 # testTimeArray()
-testHorizon()
+for i in testHorizon():
+    print(i)
+# testHorizon()
 # testFlightPath()
 # response = testGetTLE()  # loading from API every time is slow, should load from a file instead
 # # testCurrLocation(response)
