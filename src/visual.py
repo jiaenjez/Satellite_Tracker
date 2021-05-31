@@ -104,7 +104,7 @@ def plotAllFlightPath(allPath: []) -> FuncAnimation:
 
     def update(frame):
         ax.cla()
-        gc.collect()
+        # gc.collect()
         setup()
         ax.set(xlabel='longitude', ylabel='latitude', title=allPath[frame + 1].name)
         long = allPath[frame + 1].path[1]
@@ -156,7 +156,7 @@ def plotAllRadioPass(sats: []):
 
     def update(frame):
         ax.cla()
-        gc.collect()
+        # gc.collect()
         setup()
         ax.set(xlabel='longitude', ylabel='latitude', title=sats[frame + 1].name)
         sat = sats[frame + 1]
