@@ -71,7 +71,7 @@ def getAllPath():
     totalT = 0
     count = 0
     for r in f:
-        s = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 3.0 * 3600, 3)
+        s = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 10.0 * 3600, 1/4)
         totalT += s.calcTimer
         print(count + 1, "/", len(f))
         count += 1
@@ -125,13 +125,14 @@ def updateAllPath(allPath: []) -> FuncAnimation:
 
 tle = satnogs_export.loadTLE()
 response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
-lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
-x, y, z, h = satnogs_calc.getOrbitPath(response, DURATION, RESOLUTION)
-updateOrbit(x, y, z, h)
+
+# lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
+# x, y, z, h = satnogs_calc.getOrbitPath(response, DURATION, RESOLUTION)
+# updateOrbit(x, y, z, h)
 
 # var = updatePath(lat, long, start, t)  # DO NOT REMOVE THIS ASSIGNMENT, other gets garbage collected
-pyplot.show()
+# pyplot.show()
 
-# f = updateAllPath(getAllPath())
-# # f.save('D:\\path.gif', dpi=100)
-# # pyplot.show()
+f = updateAllPath(getAllPath())
+# f.save('D:\\path.gif', dpi=100)
+pyplot.show()
