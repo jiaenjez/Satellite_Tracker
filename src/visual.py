@@ -1,11 +1,9 @@
 import gc
 import random
-
 from matplotlib import pyplot, animation
 from matplotlib.animation import FuncAnimation
 from skyfield.api import load
 from skyfield.toposlib import wgs84
-
 from src import satnogs_calc, flightPath, satnogs_export
 import time
 
