@@ -2,15 +2,11 @@ from matplotlib import pyplot, animation
 from matplotlib.animation import FuncAnimation
 from skyfield.api import load
 from src import satnogs_calc, flightPath, satnogs_export
-import urllib
 import time
 
 DURATION = 3 * 3600  # 3600 sec
 RESOLUTION = 1 / 60  # r = 0.25 means 4 updates per minute
 ANIMATION_SPEED = RESOLUTION * 60.0 * 1000  # set this to 3600 for more realistic speed
-
-
-# ANIMATION_SPEED = 1
 
 
 def singleFlightPath(lat: [float], long: [float], start: (float, float), timestamp) -> FuncAnimation:
@@ -51,7 +47,7 @@ def getAllFlightPath():
     sats = []
     count = 0
     for r in file:
-        satellite = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 24.0 * 3600, 3)
+        satellite = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 72.0 * 3600, 3)
         print(count + 1, "/", len(file))
         count += 1
         satellite.findHorizonPath(satellite.findHorizonTime())
@@ -78,7 +74,7 @@ def plotAllFlightPath(allPath: []) -> FuncAnimation:
         ax.annotate(f'. {"Dalian, China"}', (121.6147, 38.9140), color='black')
         ax.annotate(f'. {"Singapore"}', (103.8198, 1.3521), color='black')
         ax.annotate(f'. {"Johannesburg, South Africa"}', (28.0473, -26.2041), color='black')
-        ax.set(xlabel='longitude', ylabel='latitude', title='AMICALSAT')
+        ax.set(xlabel='longitude', ylabel='latitude', title='NAME')
         # ax.grid()
 
     def init():
@@ -121,7 +117,7 @@ def plotAllRadioPass(sats: []):
         ax.annotate(f'. {"Dalian, China"}', (121.6147, 38.9140), color='black')
         ax.annotate(f'. {"Singapore"}', (103.8198, 1.3521), color='black')
         ax.annotate(f'. {"Johannesburg, South Africa"}', (28.0473, -26.2041), color='black')
-        ax.set(xlabel='longitude', ylabel='latitude', title='AMICALSAT')
+        ax.set(xlabel='longitude', ylabel='latitude', title='NAME')
         # ax.grid()
 
     def init():
@@ -132,7 +128,7 @@ def plotAllRadioPass(sats: []):
         for p in sat.radioPass:
             long = p[1]
             lat = p[0]
-            currPath = ax.plot(long, lat, 'black', label='radio pass', linewidth=2)
+            currPath = ax.plot(long, lat, 'black', label=str(p[3]), linewidth=2)
         if sat.radioPass:
             ax.legend()
         return currPath,
@@ -146,7 +142,7 @@ def plotAllRadioPass(sats: []):
         for p in sat.radioPass:
             long = p[1]
             lat = p[0]
-            currPath = ax.plot(long, lat, 'black', label='radio pass', linewidth=2)
+            currPath = ax.plot(long, lat, 'black', label=str(p[3]), linewidth=2)
         if sat.radioPass:
             ax.legend()
         return currPath,
@@ -156,13 +152,10 @@ def plotAllRadioPass(sats: []):
 
 # tle = satnogs_export.loadTLE()
 # response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
-#
-# lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
+## lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
 # x, y, z, h = satnogs_calc.getOrbitPath(response, DURATION, RESOLUTION)
-# updateOrbit(x, y, z, h)
-#
-# # var = updatePath(lat, long, start, t)  # DO NOT REMOVE THIS ASSIGNMENT, other gets garbage collected
 # pyplot.show()
+
 s = getAllFlightPath()
 g = plotAllRadioPass(s)
 # f = plotAllFlightPath(s)
