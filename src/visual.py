@@ -57,7 +57,7 @@ def getAllFlightPath():
 
 
 def plotAllFlightPath(allPath: []) -> FuncAnimation:
-    fig, ax = pyplot.subplots(figsize=(20, 10))
+    fig, ax = pyplot.subplots(figsize=(15, 7.5))
     img = pyplot.imread("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg",
                         format='jpg')
 
@@ -99,7 +99,7 @@ def plotAllFlightPath(allPath: []) -> FuncAnimation:
 
 
 def plotAllRadioPass(sats: []):
-    fig, ax = pyplot.subplots(figsize=(20, 10))
+    fig, ax = pyplot.subplots(figsize=(15, 7.5))
     img = pyplot.imread("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg",
                         format='jpg')
 
