@@ -71,7 +71,7 @@ def getAllPath():
     totalT = 0
     count = 0
     for r in f:
-        s = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 10.0 * 3600, 1/4)
+        s = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 5.0 * 3600, 1)
         totalT += s.calcTimer
         print(count + 1, "/", len(f))
         count += 1
@@ -124,7 +124,7 @@ def updateAllPath(allPath: []) -> FuncAnimation:
 
 
 tle = satnogs_export.loadTLE()
-response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
+# response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
 
 # lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
 # x, y, z, h = satnogs_calc.getOrbitPath(response, DURATION, RESOLUTION)
