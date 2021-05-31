@@ -73,7 +73,7 @@ def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 
     location = satellite.at(interval)
     LatLong = wgs84.subpoint(location)
 
-    assert len(LatLong.elevation.au) == len(LatLong.latitude.degrees)
+    # assert len(LatLong.elevation.au) == len(LatLong.latitude.degrees)
 
     print(f'getLatLongPath {time.perf_counter() - timer:.3f} second to process')
     return LatLong.latitude.degrees, LatLong.longitude.degrees, (x, y), t, lines[0]
