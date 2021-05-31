@@ -50,17 +50,12 @@ class flightPath(object):
         t = ts.now()
         start = t.utc.second
         end = start + self.duration
-        lat = []
-        long = []
+        interval = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute,
+                          numpy.arange(start, end, self.freq * 60))
+        location = satellite.at(interval)
+        LatLong = wgs84.subpoint(location)
 
-        for sec in numpy.arange(start, end, self.freq * 60.0):
-            currTime = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, sec)
-            currLoc = satellite.at(currTime)
-            currLatLong = wgs84.subpoint(currLoc)
-            lat.append(currLatLong.latitude.degrees)
-            long.append(currLatLong.longitude.degrees)
-
-        self.path = (lat, long)
+        self.path = (LatLong.latitude.degrees, LatLong.longitude.degrees)
         self.beginTime = t
 
     def _calcXYZPath(self) -> ([], [], ()):
@@ -73,20 +68,16 @@ class flightPath(object):
         t = ts.now()
         start = t.utc.second
         end = start + self.duration
-        x = []
-        y = []
-        z = []
+        interval = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute,
+                          numpy.arange(start, end, self.freq * 60))
+        location = satellite.at(interval)
+        x = location.position.km[0]
+        y = location.position.km[1]
+        z = location.position.km[2]
         h = []
 
-        for sec in numpy.arange(start, end, self.freq * 60.0):
-            currTime = ts.utc(t.utc.year, t.utc.month, t.utc.day, t.utc.hour, t.utc.minute, sec)
-            currLoc = satellite.at(currTime)
-            x.append(currLoc.position.km[0])
-            y.append(currLoc.position.km[1])
-            z.append(currLoc.position.km[2])
-            point = numpy.array((currLoc.position.km[0], currLoc.position.km[1], currLoc.position.km[2]))
-            center = numpy.array((0, 0, 0))
-            h.append(numpy.linalg.norm(point - center))
+        for i in range(len(x)):
+            h.append(numpy.linalg.norm(numpy.array([x[i], y[i], z[i]]) - numpy.array([0, 0, 0])))
 
         self.path = (x, y, z, h)
         self.beginTime = t
