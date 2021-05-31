@@ -100,7 +100,7 @@ class flightPath(object):
                 t1_sec = t0_sec + diff
                 intervals.append(
                     (ts.utc(t0.utc.year, t0.utc.month, t0.utc.day, t0.utc.hour, t0.utc.minute,
-                            numpy.arange(t0_sec, t1_sec, 1)),
+                            numpy.arange(t0_sec, t1_sec, 60)),
                      datetime_peak))
 
         # return sorted(intervals, key=lambda x: -len(x[0]))
