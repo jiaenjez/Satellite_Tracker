@@ -169,7 +169,7 @@ dalian = wgs84.latlon(38.9140, 121.6147, elevation_m=29)
 irvine = wgs84.latlon(33.643831, -117.841132, elevation_m=17)
 duration = 1 * 24 * 3600
 
-s = getAllFlightPath([dalian, irvine], duration)
+s = getAllFlightPath([dalian], duration)
 g = plotAllRadioPass(s)
 # f = plotAllFlightPath(s)
 # f.save('flightPath.gif', dpi=200)
