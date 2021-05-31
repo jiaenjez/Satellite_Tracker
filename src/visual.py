@@ -58,13 +58,12 @@ def getAllFlightPath():
 
 def plotAllFlightPath(allPath: []) -> FuncAnimation:
     fig, ax = pyplot.subplots(figsize=(20, 10))
+    img = pyplot.imread("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg",
+                        format='jpg')
 
     def setup():
         ax.set_xlim([-180, 180])
         ax.set_ylim([-90, 90])
-        img = pyplot.imread("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg",
-                            format='jpg')
-        # img = pyplot.imread("D:\\map.jpg", format='jpg')
         ax.imshow(img, origin='upper', extent=[-180, 180, -90, 90], alpha=0.75)
         ax.annotate(f'. {"UC Irvine"}', (-117.841132, 33.643831), color='black')
         ax.annotate(f'. {"Plano, TX"}', (-96.697442, 32.999553), color='black')
@@ -83,7 +82,7 @@ def plotAllFlightPath(allPath: []) -> FuncAnimation:
         long = allPath[0].path[1]
         lat = allPath[0].path[0]
         currPath = ax.plot(long, lat, 'black', label='ground track', linewidth=2)
-        ax.legend()
+        ax.legend(loc='upper right')
         return currPath,
 
     def update(frame):
@@ -93,7 +92,7 @@ def plotAllFlightPath(allPath: []) -> FuncAnimation:
         long = allPath[frame + 1].path[1]
         lat = allPath[frame + 1].path[0]
         currPath = ax.plot(long, lat, 'black', label='ground track', linewidth=2)
-        ax.legend()
+        ax.legend(loc='upper right')
         return currPath,
 
     return animation.FuncAnimation(fig, update, frames=len(allPath) - 1, init_func=init, interval=1000)
@@ -101,13 +100,12 @@ def plotAllFlightPath(allPath: []) -> FuncAnimation:
 
 def plotAllRadioPass(sats: []):
     fig, ax = pyplot.subplots(figsize=(20, 10))
+    img = pyplot.imread("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg",
+                        format='jpg')
 
     def setup():
         ax.set_xlim([-180, 180])
         ax.set_ylim([-90, 90])
-        img = pyplot.imread("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg",
-                            format='jpg')
-        # img = pyplot.imread("D:\\map.jpg", format='jpg')
         ax.imshow(img, origin='upper', extent=[-180, 180, -90, 90], alpha=0.75)
         ax.annotate(f'. {"UC Irvine"}', (-117.841132, 33.643831), color='black')
         ax.annotate(f'. {"Plano, TX"}', (-96.697442, 32.999553), color='black')
@@ -130,7 +128,7 @@ def plotAllRadioPass(sats: []):
             lat = p[0]
             currPath = ax.plot(long, lat, 'black', label=str(p[3]), linewidth=2)
         if sat.radioPass:
-            ax.legend()
+            ax.legend(loc='upper right')
         return currPath,
 
     def update(frame):
@@ -144,7 +142,7 @@ def plotAllRadioPass(sats: []):
             lat = p[0]
             currPath = ax.plot(long, lat, 'black', label=str(p[3]), linewidth=2)
         if sat.radioPass:
-            ax.legend()
+            ax.legend(loc='upper right')
         return currPath,
 
     return animation.FuncAnimation(fig, update, frames=len(sats) - 1, init_func=init, interval=1000)
@@ -152,12 +150,12 @@ def plotAllRadioPass(sats: []):
 
 # tle = satnogs_export.loadTLE()
 # response = satnogs_calc.getTLELineResponse(tle, "amicalsat")
-## lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
+# lat, long, start, t, name = satnogs_calc.getLatLongPath(response, DURATION, RESOLUTION)
 # x, y, z, h = satnogs_calc.getOrbitPath(response, DURATION, RESOLUTION)
 # pyplot.show()
 
 s = getAllFlightPath()
 g = plotAllRadioPass(s)
-# f = plotAllFlightPath(s)
+f = plotAllFlightPath(s)
 # f.save('D:\\path.gif', dpi=100)
 pyplot.show()
