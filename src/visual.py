@@ -71,7 +71,7 @@ def getAllFlightPath(location: list, duration: float):
         for rx in location:
             satellite.findHorizonPath(satellite.findHorizonTime(rx))
         path.append(satellite)
-        print(f'{count} / {len(file)}')
+        print(f'{count}  /  {len(file)}')
         count += 1
 
     return path
