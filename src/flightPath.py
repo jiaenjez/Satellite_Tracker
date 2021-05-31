@@ -64,7 +64,7 @@ class flightPath(object):
         location = self.satellite.at(self.interval)
         LatLong = wgs84.subpoint(location)
 
-        self.path = (LatLong.latitude.degrees, LatLong.longitude.degrees, LatLong.elevation.au)
+        self.path = (LatLong.latitude.degrees, LatLong.longitude.degrees, LatLong.elevation.au, self.interval, t)
 
 
     def findHorizonTime(self, rx: wgs84.latlon = wgs84.latlon(33.643831, -117.841132, elevation_m=17)) -> list:
@@ -86,6 +86,7 @@ class flightPath(object):
             try:
                 t[i + 2]
             except IndexError:
+                #  satellite set after end time of given duration
                 break
             else:
                 datetime_rise = Time.utc_datetime(t[i])
@@ -102,13 +103,13 @@ class flightPath(object):
                             numpy.arange(t0_sec, t1_sec, 1)),
                      datetime_peak))
 
-        # print("found: ", len(interval))
-        # print("finding horizon for duration of 3 days took: ", time.perf_counter() - fuctimer)
-        return sorted(intervals, key=lambda x: -len(x[0]))
+        # return sorted(intervals, key=lambda x: -len(x[0]))
+        return intervals
 
 
     def findHorizonPath(self, intervals: list):
         for t in intervals:
             location = self.satellite.at(t[0])
             LatLong = wgs84.subpoint(location)
-            self.radioPass.append((LatLong.latitude.degrees, LatLong.longitude.degrees, LatLong.elevation.au))
+            self.radioPass.append((LatLong.latitude.degrees, LatLong.longitude.degrees, LatLong.elevation.au,
+                                   t[0], t[1]))
