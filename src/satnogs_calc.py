@@ -73,6 +73,7 @@ def getLatLongPath(lines: [], duration: float = 4.0 * 3600, resolution: float = 
     location = satellite.at(interval)
     LatLong = wgs84.subpoint(location)
 
+    assert len(LatLong.elevation.au) == len(LatLong.latitude.degrees)
 
     print(f'getLatLongPath {time.perf_counter() - timer:.3f} second to process')
     return LatLong.latitude.degrees, LatLong.longitude.degrees, (x, y), t, lines[0]
@@ -152,5 +153,5 @@ lines = ["AMICALSAT", "1 46287U 20061R   21146.44766273  .00000677  00000-0  449
                                                                                                "220.1957 0003468 "
                                                                                                "144.5473 215.5988 "
                                                                                                "15.10442191 40023"]
-getOrbitPath(lines)
+getLatLongPath(lines)
 
