@@ -45,6 +45,22 @@ def singleFlightPath(lat: [float], long: [float], start: (float, float), timesta
                                    blit=True, save_count=0)
 
 
+def getSpecificFlightPath(name: str, location: list, duration: float):
+    file = satnogs_export.loadTLE(satnogs_export.TLE_DIR)
+    path = []
+
+    for r in file:
+        if r['tle0'].lower() != name.lower():
+            continue
+        satellite = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], duration, 3)
+        for rx in location:
+            satellite.findHorizonPath(satellite.findHorizonTime(rx))
+        path.append(satellite)
+        break
+
+    return path
+
+
 def getAllFlightPath(location: list, duration: float):
     file = satnogs_export.loadTLE(satnogs_export.TLE_DIR)
     path = []
@@ -169,8 +185,17 @@ dalian = wgs84.latlon(38.9140, 121.6147, elevation_m=29)
 irvine = wgs84.latlon(33.643831, -117.841132, elevation_m=17)
 duration = 1 * 24 * 3600
 
-s = getAllFlightPath([dalian], duration)
+s = getAllFlightPath([irvine, dalian], duration)
 g = plotAllRadioPass(s)
+
+# test
+# h = getSpecificFlightPath("amicalsat", [irvine], duration)
+# for path in h[0].radioPass:
+#     interval = path[3]
+#     t0 = interval[0].utc_strftime("%Y %b %d %H:%M:%S")
+#     t1 = interval[-1].utc_strftime("%H:%M:%S")
+#     print(f'T: {t0} - {t1}')
+
 # f = plotAllFlightPath(s)
 # f.save('flightPath.gif', dpi=200)
 pyplot.show()

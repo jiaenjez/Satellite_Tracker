@@ -89,7 +89,7 @@ class flightPath(object):
                 t[i + 2]
             except IndexError:
                 #  satellite set after end time of given duration
-                continue
+                break
             else:
                 datetime_rise = Time.utc_datetime(t[i])
                 datetime_peak = Time.utc_datetime(t[i + 1])
