@@ -47,7 +47,7 @@ def getAllFlightPath():
     sats = []
     count = 0
     for r in file:
-        satellite = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 72.0 * 3600, 3)
+        satellite = flightPath.flightPath(r['tle0'], r['tle1'], r['tle2'], 10.0 * 3600, 3)
         print(count + 1, "/", len(file))
         count += 1
         satellite.findHorizonPath(satellite.findHorizonTime())
@@ -126,7 +126,10 @@ def plotAllRadioPass(sats: []):
         for p in sat.radioPass:
             long = p[1]
             lat = p[0]
-            currPath = ax.plot(long, lat, 'black', label=str(p[3]), linewidth=2)
+            interval = p[3]
+            t0 = interval[0].utc_strftime("%Y %b %d %H:%M:%S")
+            t1 = interval[-1].utc_strftime("%H:%M:%S")
+            currPath = ax.plot(long, lat, 'black', label=f'{t0} - {t1}, Duration:{len(interval)}', linewidth=2)
         if sat.radioPass:
             ax.legend(loc='upper right')
         return currPath,
@@ -140,7 +143,10 @@ def plotAllRadioPass(sats: []):
         for p in sat.radioPass:
             long = p[1]
             lat = p[0]
-            currPath = ax.plot(long, lat, 'black', label=str(p[3]), linewidth=2)
+            interval = p[3]
+            t0 = interval[0].utc_strftime("%Y %b %d %H:%M:%S")
+            t1 = interval[-1].utc_strftime("%H:%M:%S")
+            currPath = ax.plot(long, lat, 'black', label=f'T: {t0} - {t1}, Duration:{len(interval)}', linewidth=2)
         if sat.radioPass:
             ax.legend(loc='upper right')
         return currPath,
