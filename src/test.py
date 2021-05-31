@@ -226,7 +226,7 @@ def testAmical():
 def testHorizon():
     # TODO visit https://www.n2yo.com/passes/?s=46287&a=1 and compare result
     fuctimer = time.perf_counter()
-    irvine = wgs84.latlon(33.643831, -117.841132)  # receiver location object
+    irvine = wgs84.latlon(33.643831, -117.841132, elevation_m=17)  # receiver location object
     now = load.timescale().now().utc
     ts = load.timescale()
     start = ts.now()
