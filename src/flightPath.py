@@ -56,6 +56,7 @@ class flightPath(object):
         LatLong = wgs84.subpoint(location)
 
         self.path = (LatLong.latitude.degrees, LatLong.longitude.degrees)
+        self.elevation = LatLong.elevation.au
         self.beginTime = t
 
     def _calcXYZPath(self) -> ([], [], ()):
