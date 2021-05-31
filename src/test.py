@@ -1,6 +1,6 @@
 import time
 from matplotlib import pyplot
-from src import satnogs_api, satnogs_selection, satnogs_calc, location_input
+from src import satnogs_api, satnogs_selection, satnogs_calc, location_input, satnogs_export
 from skyfield.api import EarthSatellite, load, wgs84, Time
 import requests
 import pytz
@@ -222,7 +222,7 @@ def testAmical():
     return EarthSatellite(tle1, tle2, tle0, load.timescale())
 
 
-def testHorizon():
+def testHorizon(r):
     # TODO visit https://www.n2yo.com/passes/?s=46287&a=1 and compare result
     fuctimer = time.perf_counter()
     irvine = wgs84.latlon(33.643831, -117.841132, elevation_m=17)  # receiver location object
@@ -230,34 +230,81 @@ def testHorizon():
     ts = load.timescale()
     start = ts.now()
     end = ts.utc(now.year, now.month, now.day, now.hour, now.minute, now.second + 3 * 24 * 3600)
-    satellite = testAmical()  # satellite object
+
+    # satellite = testAmical()  # satellite object
+    # print(satellite)
+
+    satellite = EarthSatellite(r['tle0'], r['tle1'], r['tle2'], ts)
+    print(satellite)
+
     condition = {"bare": 0, "marginal": 25.0, "good": 50.0, "excellent": 75.0}
-    degree = condition["bare"]  # peak is at 90
+    degree = condition["marginal"]  # peak is at 90
     t, events = satellite.find_events(irvine, start, end, altitude_degrees=degree)
+
+    zero_degree = 0
+    t_wide,  events_wide = satellite.find_events(irvine, start, end, altitude_degrees=zero_degree)
 
     for ti, event in zip(t, events):
         name = (f'rise above {degree}°', 'culminate', f'set below {degree}°')[event]
         print(ti.utc_strftime('%Y %b %d %H:%M:%S'), name)
 
-    interval = []
+    """
+    [y0 = 20, y1 = 31]
+    2021 Jun 01 18:20:05 rise above 0°
+    2021 Jun 01 18:26:03 culminate
+    2021 Jun 01 18:31:58 set below 0°
+
+    2021 Jun 01 19:55:54 rise above 0°
+    2021 Jun 01 19:59:52 culminate
+    2021 Jun 01 20:03:49 set below 0°
+    
+    [x0 = 23, x1 = 28]
+    2021 Jun 01 18:23:56 rise above 25.0°
+    2021 Jun 01 18:26:03 culminate
+    2021 Jun 01 18:28:10 set below 25.0°
+    
+    for event in bare:
+        y0, y1 = event[i], event[i + 2]
+        for e in marginal:
+            x0, x1 = e[i], e[i + 2]
+            if x0 > y0 and x1 < y1:
+                intervals.append([y0 = 20, y1 = 31])
+    """
+
+    wide_intervals = []
+    for i in range(0, len(events_wide), 3):
+        datetime_rise = Time.utc_datetime(t_wide[i])
+        datetime_peak = Time.utc_datetime(t_wide[i + 1])
+        datetime_set = Time.utc_datetime(t_wide[i + 2])
+        rise = ts.utc(datetime_rise.year, datetime_rise.month, datetime_rise.day, datetime_rise.hour,datetime_rise.minute, datetime_rise.second)
+        diff = numpy.float64((datetime_set - datetime_rise).total_seconds())
+        rise_sec = rise.utc.second
+        set_sec = rise_sec + diff
+        wide_intervals.append((ts.utc(rise.utc.year, rise.utc.month, rise.utc.day, rise.utc.hour, rise.utc.minute, numpy.arange(rise_sec, set_sec, 60)),datetime_peak))
+
+    intervals = []
+    match_intervals = []
     for i in range(0, len(events), 3):
         datetime_rise = Time.utc_datetime(t[i])
         datetime_peak = Time.utc_datetime(t[i + 1])
         datetime_set = Time.utc_datetime(t[i + 2])
-        t0 = ts.utc(datetime_rise.year, datetime_rise.month, datetime_rise.day, datetime_rise.hour,
-                    datetime_rise.minute, datetime_rise.second)
 
+        rise = ts.utc(datetime_rise.year, datetime_rise.month,datetime_rise.day, datetime_rise.hour,datetime_rise.minute, datetime_rise.second)
         diff = numpy.float64((datetime_set - datetime_rise).total_seconds())
-        t0_sec = t0.utc.second
-        t1_sec = t0_sec + diff
-        interval.append(
-            (ts.utc(t0.utc.year, t0.utc.month, t0.utc.day, t0.utc.hour, t0.utc.minute, numpy.arange(t0_sec, t1_sec, 1)),
-             datetime_peak))
+        rise_sec = rise.utc.second
+        set_sec = rise_sec + diff
+        interval = (ts.utc(rise.utc.year, rise.utc.month, rise.utc.day,rise.utc.hour, rise.utc.minute,numpy.arange(rise_sec, set_sec, 60)),datetime_peak)
+        intervals.append(interval)
 
+        for wi in wide_intervals:
+            if wi[1] == interval[1]:
+                match_intervals.append(wi)
 
-    print("found: ", len(interval))
+    assert len(intervals) == len(match_intervals)
+
+    print("found: ", len(match_intervals))
     print("finding horizon for duration of 3 days took: ", time.perf_counter() - fuctimer)
-    return sorted(interval, key=lambda x: -len(x[0]))
+    return sorted(intervals, key=lambda x: -len(x[0]))
 
 
 def testTimeArray():
@@ -287,8 +334,18 @@ def testTimeArray():
 driver
 """
 
+
 # testTimeArray()
-print(testHorizon())
+
+file = satnogs_export.loadTLE(satnogs_export.TLE_DIR)
+path = []
+count = 1
+
+for r in file:
+    # print(r['tle0'], r['tle1'], r['tle2'], "\n\n")
+    testHorizon(r)
+
+
 # testFlightPath()
 # response = testGetTLE()  # loading from API every time is slow, should load from a file instead
 # # testCurrLocation(response)
