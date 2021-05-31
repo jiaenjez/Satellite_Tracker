@@ -67,7 +67,7 @@ class flightPath(object):
         self.path = (LatLong.latitude.degrees, LatLong.longitude.degrees, LatLong.elevation.au, self.interval, t)
 
 
-    def findHorizonTime(self, rx: wgs84.latlon = wgs84.latlon(33.643831, -117.841132, elevation_m=17)) -> list:
+    def findHorizonTime(self, rx: wgs84.latlon) -> list:
         now = self.beginTime
         ts = load.timescale()
         start = now
@@ -77,6 +77,8 @@ class flightPath(object):
         degree = condition["bare"]  # peak is at 90
         t, events = self.satellite.find_events(rx, start, end, altitude_degrees=degree)
 
+        # print(start.utc_strftime('%Y %b %d %H:%M:%S'), "-", end.utc_strftime('%Y %b %d %H:%M:%S'))
+        #
         # for ti, event in zip(t, events):
         #     name = (f'rise above {degree}°', 'culminate', f'set below {degree}°')[event]
         #     print(ti.utc_strftime('%Y %b %d %H:%M:%S'), name)
@@ -87,7 +89,7 @@ class flightPath(object):
                 t[i + 2]
             except IndexError:
                 #  satellite set after end time of given duration
-                break
+                continue
             else:
                 datetime_rise = Time.utc_datetime(t[i])
                 datetime_peak = Time.utc_datetime(t[i + 1])
