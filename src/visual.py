@@ -102,7 +102,8 @@ def updateAllPath(allPath: []) -> FuncAnimation:
         ax.set(xlabel='longitude', ylabel='latitude', title=allPath[0].name)
         long = allPath[0].path[1]
         lat = allPath[0].path[0]
-        currPath = ax.plot(long, lat, 'black', linewidth=2)
+        currPath = ax.plot(long, lat, 'black', label='ground track', linewidth=2)
+        ax.legend()
         return currPath,
 
     def update(frame):
@@ -111,7 +112,8 @@ def updateAllPath(allPath: []) -> FuncAnimation:
         ax.set(xlabel='longitude', ylabel='latitude', title=allPath[frame + 1].name)
         long = allPath[frame + 1].path[1]
         lat = allPath[frame + 1].path[0]
-        currPath = ax.plot(long, lat, 'black', linewidth=2)
+        currPath = ax.plot(long, lat, 'black', label='ground track', linewidth=2)
+        ax.legend()
         return currPath,
 
     return animation.FuncAnimation(fig, update, frames=len(allPath)-1, init_func=init, interval=1000)
