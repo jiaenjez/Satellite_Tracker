@@ -229,7 +229,7 @@ def testHorizon(r):
     now = load.timescale().now().utc
     ts = load.timescale()
     start = ts.now()
-    end = ts.utc(now.year, now.month, now.day, now.hour, now.minute, now.second + 3 * 24 * 3600)
+    end = ts.utc(now.year, now.month, now.day, now.hour, now.minute, now.second + 1 * 24 * 3600)
 
     # satellite = testAmical()  # satellite object
     # print(satellite)
@@ -239,64 +239,42 @@ def testHorizon(r):
     condition = {"bare": 0, "marginal": 25.0, "good": 50.0, "excellent": 75.0}
     degree = condition["marginal"]  # peak is at 90
     t, events = satellite.find_events(irvine, start, end, altitude_degrees=degree)
-
-    zero_degree = 0
-    t_wide,  events_wide = satellite.find_events(irvine, start, end, altitude_degrees=zero_degree)
+    t_wide, events_wide = satellite.find_events(irvine, start, end, altitude_degrees=0)
 
     # for ti, event in zip(t, events):
     #     name = (f'rise above {degree}°', 'culminate', f'set below {degree}°')[event]
     #     print(ti.utc_strftime('%Y %b %d %H:%M:%S'), name)
+    eventTable = dict()
 
-    wide_intervals = []
     for i in range(0, len(events_wide), 3):
-        try:
-            t[i+1]
-            t[i+2]
-        except IndexError:
-            datetime_rise = Time.utc_datetime(t_wide[i])
-            datetime_peak = Time.utc_datetime(t_wide[i ])
-            datetime_set = Time.utc_datetime(t_wide[i])
-        else:
-            datetime_rise = Time.utc_datetime(t_wide[i])
-            datetime_peak = Time.utc_datetime(t_wide[i + 1])
-            datetime_set = Time.utc_datetime(t_wide[i + 2])
-        rise = ts.utc(datetime_rise.year, datetime_rise.month, datetime_rise.day, datetime_rise.hour,datetime_rise.minute, datetime_rise.second)
+        datetime_rise = Time.utc_datetime(t_wide[i])
+        datetime_peak = Time.utc_datetime(t_wide[i + 1])
+        datetime_set = Time.utc_datetime(t_wide[i + 2])
+
+        rise = ts.utc(datetime_rise.year, datetime_rise.month, datetime_rise.day, datetime_rise.hour,
+                      datetime_rise.minute, datetime_rise.second)
         diff = numpy.float64((datetime_set - datetime_rise).total_seconds())
         rise_sec = rise.utc.second
         set_sec = rise_sec + diff
-        wide_intervals.append((ts.utc(rise.utc.year, rise.utc.month, rise.utc.day, rise.utc.hour, rise.utc.minute, numpy.arange(rise_sec, set_sec, 60)),datetime_peak))
+        eventTable[datetime_peak] = ts.utc(rise.utc.year, rise.utc.month, rise.utc.day, rise.utc.hour, rise.utc.minute,
+                                           numpy.arange(rise_sec, set_sec, 60))
 
     intervals = []
-    match_intervals = []
     for i in range(0, len(events), 3):
-        try:
-            t[i+1]
-            t[i+2]
-        except IndexError:
-            datetime_rise = Time.utc_datetime(t_wide[i])
-            datetime_peak = Time.utc_datetime(t_wide[i])
-            datetime_set = Time.utc_datetime(t_wide[i])
+        datetime_peak = Time.utc_datetime(t[i + 1])
+        if datetime_peak in eventTable.keys():
+            intervals.append(eventTable[datetime_peak])
         else:
-            datetime_rise = Time.utc_datetime(t[i])
-            datetime_peak = Time.utc_datetime(t[i + 1])
-            datetime_set = Time.utc_datetime(t[i + 2])
+            # TODO should never reach here
+            intervals.clear()
+            intervals.append("NOT FOUND")
+            break
 
-        rise = ts.utc(datetime_rise.year, datetime_rise.month,datetime_rise.day, datetime_rise.hour,datetime_rise.minute, datetime_rise.second)
-        diff = numpy.float64((datetime_set - datetime_rise).total_seconds())
-        rise_sec = rise.utc.second
-        set_sec = rise_sec + diff
-        interval = (ts.utc(rise.utc.year, rise.utc.month, rise.utc.day,rise.utc.hour, rise.utc.minute,numpy.arange(rise_sec, set_sec, 60)),datetime_peak)
-        intervals.append(interval)
 
-        for wi in wide_intervals:
-            if wi[1] == interval[1]:
-                match_intervals.append(wi)
 
-    # assert len(intervals) == len(match_intervals)
-
-    print("found: ", len(match_intervals), len(intervals))
-    # print("finding horizon for duration of 3 days took: ", time.perf_counter() - fuctimer)
-    return sorted(intervals, key=lambda x: -len(x[0]))
+    print("found: ", intervals)
+    # return sorted(intervals, key=lambda x: -len(x[0]))
+    return intervals
 
 
 def testTimeArray():
@@ -326,17 +304,11 @@ def testTimeArray():
 driver
 """
 
-
 # testTimeArray()
-
 file = satnogs_export.loadTLE(satnogs_export.TLE_DIR)
-path = []
-count = 1
-
 for r in file:
-    # print(r['tle0'], r['tle1'], r['tle2'], "\n\n")
+    # print(r['tle1'], r['tle2'], r['tle0'], "\n\n")
     testHorizon(r)
-
 
 # testFlightPath()
 # response = testGetTLE()  # loading from API every time is slow, should load from a file instead
