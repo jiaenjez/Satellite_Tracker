@@ -240,10 +240,10 @@ def testHorizon(r):
     degree = condition["marginal"]  # peak is at 90
     t, events = satellite.find_events(irvine, start, end, altitude_degrees=degree)
     t_wide, events_wide = satellite.find_events(irvine, start, end, altitude_degrees=0)
-
-    # for ti, event in zip(t, events):
-    #     name = (f'rise above {degree}°', 'culminate', f'set below {degree}°')[event]
-    #     print(ti.utc_strftime('%Y %b %d %H:%M:%S'), name)
+    print(t_wide, events_wide)
+    for ti, event in zip(t, events):
+        name = (f'rise above {degree}°', 'culminate', f'set below {degree}°')[event]
+        print(ti.utc_strftime('%Y %b %d %H:%M:%S'), name)
     eventTable = dict()
 
     # TODO cannot assume its always rise->peak->set, need to inspect actual content
@@ -271,9 +271,7 @@ def testHorizon(r):
             intervals.append("NOT FOUND")
             break
 
-
-
-    print("found: ", len(intervals))
+    # print("found: ", len(intervals))
     # return sorted(intervals, key=lambda x: -len(x[0]))
     return intervals
 
