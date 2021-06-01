@@ -246,6 +246,7 @@ def testHorizon(r):
     #     print(ti.utc_strftime('%Y %b %d %H:%M:%S'), name)
     eventTable = dict()
 
+    # TODO cannot assume its always rise->peak->set, need to inspect actual content
     for i in range(0, len(events_wide), 3):
         datetime_rise = Time.utc_datetime(t_wide[i])
         datetime_peak = Time.utc_datetime(t_wide[i + 1])
@@ -272,7 +273,7 @@ def testHorizon(r):
 
 
 
-    print("found: ", intervals)
+    print("found: ", len(intervals))
     # return sorted(intervals, key=lambda x: -len(x[0]))
     return intervals
 
