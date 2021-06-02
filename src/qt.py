@@ -4,6 +4,7 @@ import matplotlib
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
+from matplotlib import pyplot
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
@@ -13,8 +14,9 @@ matplotlib.use('Qt5Agg')
 class MplCanvas(FigureCanvas):
 
     def __init__(self, parent=None, width=5, height=4, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = fig.add_subplot(111)
+        # fig = Figure(figsize=(width, height), dpi=dpi)
+        fig, self.ax = pyplot.subplots(figsize=(15, 7.5))
+        # self.ax = fig.add_subplot(111)
         super(MplCanvas, self).__init__(fig)
 
 
@@ -48,8 +50,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_plot(self):
         # Drop off the first y element, append a new one.
         self.ydata = self.ydata[1:] + [random.randint(0, 10)]
-        self.canvas.axes.cla()  # Clear the canvas.
-        self.canvas.axes.plot(self.xdata, self.ydata, 'r')
+        self.canvas.ax.cla()  # Clear the canvas.
+        self.canvas.ax.plot(self.xdata, self.ydata, 'r')
         # Trigger the canvas to update and redraw.
         self.canvas.draw()
 
