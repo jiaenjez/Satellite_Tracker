@@ -86,7 +86,7 @@ def plotAllFlightPath(allPath: []) -> FuncAnimation:
         ax.set_xlim([-180, 180])
         ax.set_ylim([-90, 90])
         ax.imshow(img, origin='upper', extent=[-180, 180, -90, 90], alpha=0.75)
-        ax.annotate(f'. {"UCI"}', (-117.841132, 33.643831), color='black')
+        ax.annotate(f'. {"Irvine, CA"}', (-117.841132, 33.643831), color='black')
         ax.annotate(f'. {"Plano, TX"}', (-96.697442, 32.999553), color='black')
         ax.annotate(f'. {"Dalian, China"}', (121.6147, 38.9140), color='black')
         ax.annotate(f'. {"Singapore"}', (103.8198, 1.3521), color='black')
@@ -113,7 +113,8 @@ def plotAllFlightPath(allPath: []) -> FuncAnimation:
         ax.legend(loc='lower right')
         return currPath,
 
-    return animation.FuncAnimation(fig, update, frames=len(allPath) - 1, init_func=init, interval=1000, save_count=0)
+    return animation.FuncAnimation(fig, update, frames=len(allPath) - 1,
+                                   init_func=init, interval=1000, save_count=0)
 
 
 def plotAllRadioPass(sats: []):
@@ -131,8 +132,8 @@ def plotAllRadioPass(sats: []):
         ax.set_xlim([-180, 180])
         ax.set_ylim([-90, 90])
         ax.imshow(img, origin='upper', extent=[-180, 180, -90, 90], alpha=0.75)
-        ax.annotate(f'. {"UCI"}', (-117.841132, 33.643831), color='black')
-        ax.annotate(f'. {"Plano, TX"}', (-96.697442, 32.999553), color='black')
+        ax.annotate(f'. {"Irvine, CA"}', (-117.841132, 33.643831), color='black', fontweight='bold')
+        # ax.annotate(f'. {"Plano, TX"}', (-96.697442, 32.999553), color='black')
         ax.annotate(f'. {"Dalian, China"}', (121.6147, 38.9140), color='black')
         ax.annotate(f'. {"Singapore"}', (103.8198, 1.3521), color='black')
         ax.set(xlabel='longitude', ylabel='latitude', title='NAME')
@@ -156,7 +157,6 @@ def plotAllRadioPass(sats: []):
 
     def update(frame):
         ax.cla()
-        # gc.collect()
         setup()
         ax.set(xlabel='longitude', ylabel='latitude', title=sats[frame + 1].name)
         sat = sats[frame + 1]
@@ -183,7 +183,7 @@ def plotAllRadioPass(sats: []):
 
 dalian = wgs84.latlon(38.9140, 121.6147, elevation_m=29)
 irvine = wgs84.latlon(33.643831, -117.841132, elevation_m=17)
-duration = 1 * 24 * 3600
+duration = 2 * 24 * 3600
 
 s = getAllFlightPath([irvine, dalian], duration)
 g = plotAllRadioPass(s)
