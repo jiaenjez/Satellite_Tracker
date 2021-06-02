@@ -224,33 +224,30 @@ def testAmical():
 
 def testHorizon(r):
     # TODO visit https://www.n2yo.com/passes/?s=46287&a=1 and compare result
-    fuctimer = time.perf_counter()
     irvine = wgs84.latlon(33.643831, -117.841132, elevation_m=17)  # receiver location object
     now = load.timescale().now().utc
     ts = load.timescale()
     start = ts.now()
     end = ts.utc(now.year, now.month, now.day, now.hour, now.minute, now.second + 1 * 24 * 3600)
-
-    # satellite = testAmical()  # satellite object
-    # print(satellite)
-
     satellite = EarthSatellite(r['tle1'], r['tle2'], r['tle0'], ts)
 
     condition = {"bare": 0, "marginal": 25.0, "good": 50.0, "excellent": 75.0}
     degree = condition["marginal"]  # peak is at 90
-    t, events = satellite.find_events(irvine, start, end, altitude_degrees=degree)
-    t_wide, events_wide = satellite.find_events(irvine, start, end, altitude_degrees=0)
-    print(t_wide, events_wide)
-    for ti, event in zip(t, events):
+    t_target, events_target = satellite.find_events(irvine, start, end, altitude_degrees=degree)
+    t_all, events_all = satellite.find_events(irvine, start, end, altitude_degrees=0)
+
+    print(t_all, events_all)
+    assert len(t_all) == len(events_all)
+    for ti, event in zip(t_all, events_all):
         name = (f'rise above {degree}°', 'culminate', f'set below {degree}°')[event]
         print(ti.utc_strftime('%Y %b %d %H:%M:%S'), name)
     eventTable = dict()
 
     # TODO cannot assume its always rise->peak->set, need to inspect actual content
-    for i in range(0, len(events_wide), 3):
-        datetime_rise = Time.utc_datetime(t_wide[i])
-        datetime_peak = Time.utc_datetime(t_wide[i + 1])
-        datetime_set = Time.utc_datetime(t_wide[i + 2])
+    for i in range(0, len(events_all), 3):
+        datetime_rise = Time.utc_datetime(t_all[i])
+        datetime_peak = Time.utc_datetime(t_all[i + 1])
+        datetime_set = Time.utc_datetime(t_all[i + 2])
 
         rise = ts.utc(datetime_rise.year, datetime_rise.month, datetime_rise.day, datetime_rise.hour,
                       datetime_rise.minute, datetime_rise.second)
@@ -261,8 +258,8 @@ def testHorizon(r):
                                            numpy.arange(rise_sec, set_sec, 60))
 
     intervals = []
-    for i in range(0, len(events), 3):
-        datetime_peak = Time.utc_datetime(t[i + 1])
+    for i in range(0, len(events_target), 3):
+        datetime_peak = Time.utc_datetime(t_target[i + 1])
         if datetime_peak in eventTable.keys():
             intervals.append(eventTable[datetime_peak])
         else:
