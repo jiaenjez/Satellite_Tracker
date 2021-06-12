@@ -1,4 +1,7 @@
 import random
+import urllib
+
+import PIL
 from matplotlib import pyplot, animation
 from matplotlib.animation import FuncAnimation
 from skyfield.api import load
@@ -118,8 +121,8 @@ def plotAllFlightPath(allPath: []) -> FuncAnimation:
 
 def plotAllRadioPass(sats: []):
     fig, ax = pyplot.subplots(figsize=(15, 7.5))
-    img = pyplot.imread("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg",
-                        format='jpg')
+    url = "https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg"
+    img = pyplot.imread(urllib.request.urlopen(url), format='jpg')
 
     def color():
         red = random.random()
